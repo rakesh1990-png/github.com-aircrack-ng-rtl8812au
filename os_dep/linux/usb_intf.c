@@ -170,6 +170,9 @@ static struct usb_device_id rtw_usb_id_tbl[] = {
 	{USB_DEVICE(0x20f4, 0x805B), .driver_info = RTL8812}, /* TRENDnet - */
 	{USB_DEVICE(0x0411, 0x025d), .driver_info = RTL8812}, /* Buffalo - WI-U3-866D */
 	{USB_DEVICE(0x050D, 0x1109), .driver_info = RTL8812}, /* Belkin F9L1109 - SerComm */
+	/*=== Patched ID ===*/
+	{USB_DEVICE(0x2357, 0x010d), .driver_info = RTL8812}, /* TP-Link - T4U v2 */
+	{USB_DEVICE(0x148F, 0x9097), .driver_info = RTL8812}, /* Amped Wireless ACA1 */
 #endif
 
 #ifdef CONFIG_RTL8821A
@@ -193,6 +196,8 @@ static struct usb_device_id rtw_usb_id_tbl[] = {
 	{USB_DEVICE(0x0411, 0x0242), .driver_info = RTL8821}, /* ELECOM - WDC-433DU2H */
 	{USB_DEVICE(0x2019, 0xAB32), .driver_info = RTL8821}, /* Planex - GW-450S */
 	{USB_DEVICE(0x0846, 0x9052), .driver_info = RTL8821}, /* Netgear - A6100 */
+	/*=== Patched ID ===*/
+	{USB_DEVICE(0x056e, 0x4007),.driver_info = RTL8821}, /* Elecom - WDC-433DU2HBK */
 #endif
 
 #ifdef CONFIG_RTL8192E
