@@ -128,7 +128,16 @@ PHY_SetTxPowerLevel8814(
 );
 
 u8
-PHY_GetTxPowerIndex_8814A(
+phy_get_tx_power_index_8814a(
+	IN	PADAPTER			Adapter,
+	IN  u8				RFPath,
+	IN	u8				Rate,
+	IN	CHANNEL_WIDTH		BandWidth,
+	IN	u8				Channel
+);
+
+u8
+PHY_GetTxPowerIndex8814A(
 	IN	PADAPTER			Adapter,
 	IN  u8				RFPath,
 	IN	u8				Rate,
@@ -166,7 +175,7 @@ PHY_GetTxBBSwing_8814A(
 
 VOID
 PHY_SwChnlTimerCallback8814A(
-	IN	PRT_TIMER		pTimer
+	IN	struct timer_list		*p_timer
 );
 
 VOID
