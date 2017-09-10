@@ -185,7 +185,9 @@ static struct usb_device_id rtw_usb_id_tbl[] = {
   {USB_DEVICE(0x2357, 0x010D), .driver_info = RTL8812}, /* TP-Link - Archer T4U AC1300 */
   {USB_DEVICE(0x2357, 0x010E), .driver_info = RTL8812}, /* TP-Link - Archer T4UH AC1300 */
   {USB_DEVICE(0x2357, 0x010F), .driver_info = RTL8812}, /* TP-Link - T4UHP */
+  {USB_DEVICE(0x2357, 0x0122), .driver_info = RTL8812}, /* TP-Link - T4UHP (other) */
   {USB_DEVICE(0x7392, 0xA822), .driver_info = RTL8812}, /* Edimax - Edimax */
+  {USB_DEVICE(0x0BDA, 0x8812), .driver_info = RTL8812}, /* Alfa - AWUS036AC, AWUS036ACH & AWUS036EAC */
 #endif
 
 #ifdef CONFIG_RTL8821A
