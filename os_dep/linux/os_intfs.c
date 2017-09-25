@@ -710,6 +710,12 @@ module_param(rtw_en_gro, int, 0644);
 #endif /* CONFIG_RTW_GRO */
 #endif /* CONFIG_RTW_NAPI */
 
+#ifdef CONFIG_SW_LED
+int rtw_led_ctrl = 1;  /* Default to normal blink */
+module_param(rtw_led_ctrl, int, 0644);
+MODULE_PARM_DESC(rtw_led_ctrl,"Led Control: 0=Always off, 1=Normal blink, 2=Always on");
+#endif /* CONFIG_SW_LED */
+
 void rtw_regsty_load_target_tx_power(struct registry_priv *regsty)
 {
 	int path, rs;
@@ -1037,6 +1043,10 @@ uint loadparam(_adapter *padapter)
 #ifdef CONFIG_SUPPORT_TRX_SHARED
 	registry_par->trx_share_mode = rtw_trx_share_mode;
 #endif
+
+#ifdef CONFIG_SW_LED
+	registry_par->led_ctrl = (u8)rtw_led_ctrl;
+#endif /* CONFIG_SW_LED */
 
 #ifdef CONFIG_PCI_HCI
 	registry_par->pci_aspm_config = rtw_pci_aspm_enable;
