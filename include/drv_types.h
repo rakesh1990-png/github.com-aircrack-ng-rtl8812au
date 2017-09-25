@@ -420,6 +420,9 @@ struct registry_priv {
 #endif
 	u8 check_hw_status;
 
+#ifdef CONFIG_SW_LED
+	u8 led_ctrl;
+#endif
 	u32 pci_aspm_config;
 };
 
