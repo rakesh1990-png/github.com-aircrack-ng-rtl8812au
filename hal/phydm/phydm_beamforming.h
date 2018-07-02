@@ -1,3 +1,18 @@
+/******************************************************************************
+ *
+ * Copyright(c) 2007 - 2017 Realtek Corporation.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of version 2 of the GNU General Public License as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ *****************************************************************************/
+
 #ifndef __INC_PHYDM_BEAMFORMING_H
 #define __INC_PHYDM_BEAMFORMING_H
 
@@ -181,8 +196,13 @@ struct _RT_BEAMFORMING_INFO {
 	struct _RT_BEAMFORMER_ENTRY		beamformer_entry[BEAMFORMER_ENTRY_NUM];
 	struct _RT_BEAMFORM_STAINFO		beamform_sta_info;
 	u8					beamformee_cur_idx;
+#if defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
+	struct legacy_timer_emu					beamforming_timer;
+	struct legacy_timer_emu					mu_timer;
+#else
 	struct timer_list					beamforming_timer;
 	struct timer_list					mu_timer;
+#endif //defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
 	struct _RT_SOUNDING_INFO			sounding_info;
 	struct _RT_BEAMFORMING_OID_INFO	beamforming_oid_info;
 	struct _HAL_TXBF_INFO			txbf_info;

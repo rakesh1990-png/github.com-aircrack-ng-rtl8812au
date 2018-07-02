@@ -268,7 +268,7 @@ odm_get_bb_reg(
 void
 odm_set_rf_reg(
 	struct PHY_DM_STRUCT			*p_dm_odm,
-	enum odm_rf_radio_path_e	e_rf_path,
+	u1Byte			e_rf_path,
 	u32				reg_addr,
 	u32				bit_mask,
 	u32				data
@@ -293,7 +293,7 @@ odm_set_rf_reg(
 u32
 odm_get_rf_reg(
 	struct PHY_DM_STRUCT			*p_dm_odm,
-	enum odm_rf_radio_path_e	e_rf_path,
+	u1Byte			e_rf_path,
 	u32				reg_addr,
 	u32				bit_mask
 )
@@ -312,7 +312,38 @@ odm_get_rf_reg(
 #endif
 }
 
+enum hal_status
+phydm_set_reg_by_fw(
+	struct PHY_DM_STRUCT			*p_dm_odm,
+	enum phydm_halmac_param	config_type,
+	u32	offset,
+	u32	data,
+	u32	mask,
+	enum odm_rf_radio_path_e	e_rf_path,
+	u32 delay_time
+)
+{
+	enum hal_status	stat = HAL_STATUS_SUCCESS;
+#if (DM_ODM_SUPPORT_TYPE & (ODM_WIN))
+	stat = HAL_MAC_Config_PHY_WriteNByte(p_dm_odm,
+									config_type,
+									offset,
+									data,
+									mask,
+									e_rf_path,
+									delay_time);
+#elif (0)/*(DM_ODM_SUPPORT_TYPE & ODM_CE)*/
+	return rtw_phydm_cfg_phy_para(p_dm_odm,
+							config_type,
+							offset,
+							data,
+							mask,
+							e_rf_path,
+							delay_time);
+#endif
+	return stat;
 
+}
 
 
 /*
@@ -627,7 +658,11 @@ ODM_sleep_us(u32	us)
 void
 odm_set_timer(
 	struct PHY_DM_STRUCT		*p_dm_odm,
+#if defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
+	struct legacy_timer_emu		*p_timer,
+#else
 	struct timer_list		*p_timer,
+#endif //defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
 	u32			ms_delay
 )
 {
@@ -647,7 +682,11 @@ odm_set_timer(
 void
 odm_initialize_timer(
 	struct PHY_DM_STRUCT			*p_dm_odm,
+#if defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
+	struct legacy_timer_emu			*p_timer,
+#else
 	struct timer_list			*p_timer,
+#endif //defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
 	void	*call_back_func,
 	void				*p_context,
 	const char			*sz_id
@@ -668,7 +707,7 @@ odm_initialize_timer(
 	_init_timer(p_timer, adapter->pnetdev, call_back_func, p_dm_odm);
 #elif (DM_ODM_SUPPORT_TYPE & ODM_WIN)
 	struct _ADAPTER *adapter = p_dm_odm->adapter;
-	PlatformInitializeTimer(adapter, p_timer, call_back_func, p_context, sz_id);
+	PlatformInitializeTimer(adapter, p_timer, (RT_TIMER_CALL_BACK)call_back_func, p_context, sz_id);
 #endif
 }
 
@@ -676,7 +715,11 @@ odm_initialize_timer(
 void
 odm_cancel_timer(
 	struct PHY_DM_STRUCT		*p_dm_odm,
+#if defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
+	struct legacy_timer_emu		*p_timer
+#else
 	struct timer_list		*p_timer
+#endif //defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
 )
 {
 #if (DM_ODM_SUPPORT_TYPE & ODM_AP)
@@ -695,7 +738,11 @@ odm_cancel_timer(
 void
 odm_release_timer(
 	struct PHY_DM_STRUCT		*p_dm_odm,
+#if defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
+	struct legacy_timer_emu		*p_timer
+#else
 	struct timer_list		*p_timer
+#endif //defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
 )
 {
 #if (DM_ODM_SUPPORT_TYPE & (ODM_AP))
@@ -1131,7 +1178,7 @@ odm_get_tx_power_index (
 {
 #if (DM_ODM_SUPPORT_TYPE & ODM_WIN)
 	struct _ADAPTER		*adapter = p_dm_odm->adapter;
-	return PHY_GetTxPowerIndex(p_dm_odm->adapter, RFPath, tx_rate, band_width, Channel);
+	return PHY_GetTxPowerIndex(p_dm_odm->adapter, RFPath, tx_rate, (CHANNEL_WIDTH)band_width, Channel);
 #elif (DM_ODM_SUPPORT_TYPE & ODM_CE) && defined(DM_ODM_CE_MAC80211)
 	void		*adapter = p_dm_odm->adapter;
 	return phy_get_tx_power_index(adapter, (enum odm_rf_radio_path_e)RFPath, tx_rate, band_width, Channel);

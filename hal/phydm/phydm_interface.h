@@ -126,6 +126,18 @@ enum phydm_extend_c2h_evt {
 
 };
 
+enum phydm_halmac_param {
+	PHYDM_HALMAC_CMD_MAC_W8 = 0,
+	PHYDM_HALMAC_CMD_MAC_W16 = 1,
+	PHYDM_HALMAC_CMD_MAC_W32 = 2,
+	PHYDM_HALMAC_CMD_BB_W8,
+	PHYDM_HALMAC_CMD_BB_W16,
+	PHYDM_HALMAC_CMD_BB_W32,
+	PHYDM_HALMAC_CMD_RF_W,
+	PHYDM_HALMAC_CMD_DELAY_US,
+	PHYDM_HALMAC_CMD_DELAY_MS,
+	PHYDM_HALMAC_CMD_END = 0XFF,
+};
 
 /*
  * =========== Extern Variable ??? It should be forbidden.
@@ -209,7 +221,7 @@ odm_get_bb_reg(
 void
 odm_set_rf_reg(
 	struct PHY_DM_STRUCT			*p_dm_odm,
-	enum odm_rf_radio_path_e	e_rf_path,
+	u1Byte			e_rf_path,
 	u32				reg_addr,
 	u32				bit_mask,
 	u32				data
@@ -218,11 +230,22 @@ odm_set_rf_reg(
 u32
 odm_get_rf_reg(
 	struct PHY_DM_STRUCT			*p_dm_odm,
-	enum odm_rf_radio_path_e	e_rf_path,
+	u1Byte			e_rf_path,
 	u32				reg_addr,
 	u32				bit_mask
 );
 
+
+enum hal_status
+phydm_set_reg_by_fw(
+	struct PHY_DM_STRUCT			*p_dm_odm,
+	enum phydm_halmac_param	config_type,
+	u32	offset,
+	u32	data,
+	u32	mask,
+	enum odm_rf_radio_path_e	e_rf_path,
+	u32 delay_time
+);
 
 /*
  * Memory Relative Function.
@@ -339,15 +362,23 @@ ODM_sleep_us(u32	us);
 
 void
 odm_set_timer(
-	struct PHY_DM_STRUCT		*p_dm_odm,
+	struct PHY_DM_STRUCT		*p_dm,
+#if defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
+	struct legacy_timer_emu		*p_timer,
+#else
 	struct timer_list		*p_timer,
+#endif //defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
 	u32			ms_delay
 );
 
 void
 odm_initialize_timer(
-	struct PHY_DM_STRUCT			*p_dm_odm,
+	struct PHY_DM_STRUCT			*p_dm,
+#if defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
+	struct legacy_timer_emu			*p_timer,
+#else
 	struct timer_list			*p_timer,
+#endif //defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
 	void	*call_back_func,
 	void				*p_context,
 	const char			*sz_id
@@ -355,14 +386,22 @@ odm_initialize_timer(
 
 void
 odm_cancel_timer(
-	struct PHY_DM_STRUCT		*p_dm_odm,
+	struct PHY_DM_STRUCT		*p_dm,
+#if defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
+	struct legacy_timer_emu		*p_timer
+#else
 	struct timer_list		*p_timer
+#endif //defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
 );
 
 void
 odm_release_timer(
-	struct PHY_DM_STRUCT		*p_dm_odm,
+	struct PHY_DM_STRUCT		*p_dm,
+#if defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
+	struct legacy_timer_emu		*p_timer
+#else
 	struct timer_list		*p_timer
+#endif //defined (LINUX_VERSION_CODE) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
 );
 
 /*

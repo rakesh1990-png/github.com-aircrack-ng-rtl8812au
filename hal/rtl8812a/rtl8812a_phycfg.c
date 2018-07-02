@@ -1307,12 +1307,14 @@ PHY_SwitchWirelessBand8812(
 
 #ifdef CONFIG_RTL8821A
 		/* 20160224 yiwei ,  8811au one antenna  module don't support antenna  div , so driver must to control antenna  band , otherwise one of the band will has issue */
+#if 0        
 		if (IS_HARDWARE_TYPE_8821(Adapter)) {
 			if (Adapter->registrypriv.drv_ant_band_switch == 1 && pHalData->AntDivCfg == 0) {
-				phydm_set_ext_band_switch_8821A(&(pHalData->odmpriv) , ODM_BAND_2_4G);
+				phydm_set_ext_band_switch_8821a(&(pHalData->odmpriv) , ODM_BAND_2_4G);
 				RTW_DBG("Switch ant band to ODM_BAND_2_4G\n");
 			}
 		}
+#endif
 #endif /*#ifdef CONFIG_RTL8821A*/
 
 		phy_set_bb_reg(Adapter, rOFDMCCKEN_Jaguar, bOFDMEN_Jaguar | bCCKEN_Jaguar, 0x03);
@@ -1364,12 +1366,14 @@ PHY_SwitchWirelessBand8812(
 
 #ifdef CONFIG_RTL8821A
 		/* 20160224 yiwei ,  8811a one antenna  module don't support antenna  div , so driver must to control antenna  band , otherwise one of the band will has issue */
+#if 0
 		if (IS_HARDWARE_TYPE_8821(Adapter)) {
 			if (Adapter->registrypriv.drv_ant_band_switch == 1 && pHalData->AntDivCfg == 0) {
 				phydm_set_ext_band_switch_8821A(&(pHalData->odmpriv) , ODM_BAND_5G);
 				RTW_DBG("Switch ant band to ODM_BAND_5G\n");
 			}
 		}
+#endif
 #endif /*#ifdef CONFIG_RTL8821A*/
 
 		if (IS_HARDWARE_TYPE_8821(Adapter))
