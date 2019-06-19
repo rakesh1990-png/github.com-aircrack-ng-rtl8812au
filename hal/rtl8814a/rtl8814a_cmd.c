@@ -963,7 +963,6 @@ static void rtl8814_set_FwAoacRsvdPage_cmd(PADAPTER padapter, PRSVDPAGE_LOC rsvd
 #endif // CONFIG_PNO_SUPPORT
 #endif // CONFIG_WOWLAN
 }
-#endif
 
 
 int rtl8814_iqk_wait(_adapter* padapter, u32 timeout_ms)
