@@ -4459,7 +4459,7 @@ u8 SetHwReg8814A(PADAPTER padapter, u8 variable, u8 *pval)
 					}
 				}
 
-				val16 = BIT_SRL(retry_limit) | BIT_LRL(retry_limit);
+				val16 = BIT_SRL(RetryLimit) | BIT_LRL(RetryLimit);
 				rtw_write16(padapter, REG_RETRY_LIMIT, val16);
  			}
 #endif // !CONFIG_CONCURRENT_MODE
