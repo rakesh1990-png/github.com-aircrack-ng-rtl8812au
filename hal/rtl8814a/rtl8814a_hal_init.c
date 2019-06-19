@@ -4798,8 +4798,8 @@ u8 SetHwReg8814A(PADAPTER padapter, u8 variable, u8 *pval)
 				}
 
 				retry_limit = RL_VAL_STA;
-				val16 = retry_limit << RETRY_LIMIT_SHORT_SHIFT | retry_limit << RETRY_LIMIT_LONG_SHIFT;
-				rtw_write16(padapter, REG_RL, val16);
+				val16 = BIT_SRL(retry_limit) | BIT_LRL(retry_limit);
+				rtw_write16(padapter, REG_RETRY_LIMIT, val16);
 			}
 
 			break;
