@@ -4339,72 +4339,75 @@ u8 SetHwReg8814A(PADAPTER padapter, u8 variable, u8 *pval)
 			break;
 
 		case HW_VAR_BCN_FUNC:
-			hw_var_set_bcn_func(padapter, variable, pval);
+			// hw_var_set_bcn_func(padapter, variable, pval);
+			RTW_INFO("HW_VAR_BCN_FUNC: This shouldn't happenz");
 			break;
 
 		case HW_VAR_CORRECT_TSF:
-#ifdef CONFIG_CONCURRENT_MODE
-			hw_var_set_correct_tsf(padapter, variable, pval);
-#else //CONFIG_CONCURRENT_MODE
-			{
-				u64	tsf;
-				struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
-				struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
+			RTW_INFO("HW_VAR_CORRECT_TSF: We might want to look at thiz");
+/* #ifdef CONFIG_CONCURRENT_MODE */
+/* 			hw_var_set_correct_tsf(padapter, variable, pval); */
+/* #else //CONFIG_CONCURRENT_MODE */
+/* 			{ */
+/* 				u64	tsf; */
+/* 				struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv; */
+/* 				struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info); */
 
-				//tsf = pmlmeext->TSFValue - ((u32)pmlmeext->TSFValue % (pmlmeinfo->bcn_interval*1024)) -1024; //us
-				tsf = pmlmeext->TSFValue - rtw_modular64(pmlmeext->TSFValue, (pmlmeinfo->bcn_interval*1024)) -1024; //us
+/* 				//tsf = pmlmeext->TSFValue - ((u32)pmlmeext->TSFValue % (pmlmeinfo->bcn_interval*1024)) -1024; //us */
+/* 				tsf = pmlmeext->TSFValue - rtw_modular64(pmlmeext->TSFValue, (pmlmeinfo->bcn_interval*1024)) -1024; //us */
 
-				if(((pmlmeinfo->state&0x03) == WIFI_FW_ADHOC_STATE) || ((pmlmeinfo->state&0x03) == WIFI_FW_AP_STATE))
-				{
-					//pHalData->RegTxPause |= STOP_BCNQ;BIT(6)
-					//rtw_write8(padapter, REG_TXPAUSE, (rtw_read8(padapter, REG_TXPAUSE)|BIT(6)));
-					StopTxBeacon(padapter);
-				}
+/* 				if(((pmlmeinfo->state&0x03) == WIFI_FW_ADHOC_STATE) || ((pmlmeinfo->state&0x03) == WIFI_FW_AP_STATE)) */
+/* 				{ */
+/* 					//pHalData->RegTxPause |= STOP_BCNQ;BIT(6) */
+/* 					//rtw_write8(padapter, REG_TXPAUSE, (rtw_read8(padapter, REG_TXPAUSE)|BIT(6))); */
+/* 					StopTxBeacon(padapter); */
+/* 				} */
 
-				//disable related TSF function
-				rtw_write8(padapter, REG_BCN_CTRL, rtw_read8(padapter, REG_BCN_CTRL)&(~BIT(3)));
-				//select port0 tsf
-				rtw_write8(padapter, REG_BCN_INTERVAL+3, rtw_read8(padapter, REG_BCN_INTERVAL+3)&0x8f);
-				rtw_write32(padapter, REG_TSFTR, tsf);
-				rtw_write32(padapter, REG_TSFTR+4, tsf>>32);
+/* 				//disable related TSF function */
+/* 				rtw_write8(padapter, REG_BCN_CTRL, rtw_read8(padapter, REG_BCN_CTRL)&(~BIT(3))); */
+/* 				//select port0 tsf */
+/* 				rtw_write8(padapter, REG_BCN_INTERVAL+3, rtw_read8(padapter, REG_BCN_INTERVAL+3)&0x8f); */
+/* 				rtw_write32(padapter, REG_TSFTR, tsf); */
+/* 				rtw_write32(padapter, REG_TSFTR+4, tsf>>32); */
 
-				//enable related TSF function
-				rtw_write8(padapter, REG_BCN_CTRL, rtw_read8(padapter, REG_BCN_CTRL)|BIT(3));
+/* 				//enable related TSF function */
+/* 				rtw_write8(padapter, REG_BCN_CTRL, rtw_read8(padapter, REG_BCN_CTRL)|BIT(3)); */
 
 
-				if(((pmlmeinfo->state&0x03) == WIFI_FW_ADHOC_STATE) || ((pmlmeinfo->state&0x03) == WIFI_FW_AP_STATE))
-				{
-					//pHalData->RegTxPause  &= (~STOP_BCNQ);
-					//rtw_write8(padapter, REG_TXPAUSE, (rtw_read8(padapter, REG_TXPAUSE)&(~BIT(6))));
-					ResumeTxBeacon(padapter);
-				}
-			}
-#endif //CONFIG_CONCURRENT_MODE
+/* 				if(((pmlmeinfo->state&0x03) == WIFI_FW_ADHOC_STATE) || ((pmlmeinfo->state&0x03) == WIFI_FW_AP_STATE)) */
+/* 				{ */
+/* 					//pHalData->RegTxPause  &= (~STOP_BCNQ); */
+/* 					//rtw_write8(padapter, REG_TXPAUSE, (rtw_read8(padapter, REG_TXPAUSE)&(~BIT(6)))); */
+/* 					ResumeTxBeacon(padapter); */
+/* 				} */
+/* 			} */
+/* #endif //CONFIG_CONCURRENT_MODE */
 			break;
 
 		case HW_VAR_MLME_DISCONNECT:
-#ifdef CONFIG_CONCURRENT_MODE
-			hw_var_set_mlme_disconnect(padapter, variable, pval);
-#else
-			{
-				// Set RCR to not to receive data frame when NO LINK state
-//				val32 = rtw_read32(padapter, REG_RCR);
-//				val32 &= ~RCR_ADF;
-//				rtw_write32(padapter, REG_RCR, val32);
+			RTW_INFO("HW_VAR_MLME_DISCONNECT: We might want to look at thiz");
+/* #ifdef CONFIG_CONCURRENT_MODE */
+/* 			hw_var_set_mlme_disconnect(padapter, variable, pval); */
+/* #else */
+/* 			{ */
+/* 				// Set RCR to not to receive data frame when NO LINK state */
+/* //				val32 = rtw_read32(padapter, REG_RCR); */
+/* //				val32 &= ~RCR_ADF; */
+/* //				rtw_write32(padapter, REG_RCR, val32); */
 
-				// reject all data frames
-				rtw_write16(padapter, REG_RXFLTMAP2, 0x00);
+/* 				// reject all data frames */
+/* 				rtw_write16(padapter, REG_RXFLTMAP2, 0x00); */
 
-				// reset TSF
-				val8 = BIT(0) | BIT(1);
-				rtw_write8(padapter, REG_DUAL_TSF_RST, val8);
+/* 				// reset TSF */
+/* 				val8 = BIT(0) | BIT(1); */
+/* 				rtw_write8(padapter, REG_DUAL_TSF_RST, val8); */
 
-				// disable update TSF
-				val8 = rtw_read8(padapter, REG_BCN_CTRL);
-				val8 |= BIT(4);
-				rtw_write8(padapter, REG_BCN_CTRL, val8);
-			}
-#endif
+/* 				// disable update TSF */
+/* 				val8 = rtw_read8(padapter, REG_BCN_CTRL); */
+/* 				val8 |= BIT(4); */
+/* 				rtw_write8(padapter, REG_BCN_CTRL, val8); */
+/* 			} */
+/* #endif */
 			break;
 
 		case HW_VAR_MLME_SITESURVEY:
@@ -4485,24 +4488,26 @@ u8 SetHwReg8814A(PADAPTER padapter, u8 variable, u8 *pval)
 
 
 		case HW_VAR_BEACON_INTERVAL:
-			rtw_write16(padapter, REG_BCN_INTERVAL, *(u16*)pval);
-#ifdef CONFIG_INTERRUPT_BASED_TXBCN_EARLY_INT
-			{
-				struct mlme_ext_priv *pmlmeext;
-				struct mlme_ext_info *pmlmeinfo;
-				u16 bcn_interval;
+			RTW_INFO("HW_VAR_BEACON_INTERVAL: We might want to look at thiz");
 
-				pmlmeext = &padapter->mlmeextpriv;
-				pmlmeinfo = &pmlmeext->mlmext_info;
-				bcn_interval = *((u16*)pval);
+/* 			rtw_write16(padapter, REG_BCN_INTERVAL, *(u16*)pval); */
+/* #ifdef CONFIG_INTERRUPT_BASED_TXBCN_EARLY_INT */
+/* 			{ */
+/* 				struct mlme_ext_priv *pmlmeext; */
+/* 				struct mlme_ext_info *pmlmeinfo; */
+/* 				u16 bcn_interval; */
 
-				if ((pmlmeinfo->state&0x03) == WIFI_FW_AP_STATE)
-				{
-					RTW_INFO("%s==> bcn_interval:%d, eraly_int:%d\n", __FUNCTION__, bcn_interval, bcn_interval>>1);
-					rtw_write8(padapter, REG_DRVERLYINT, bcn_interval>>1);// 50ms for sdio
-				}
-			}
-#endif // CONFIG_INTERRUPT_BASED_TXBCN_EARLY_INT
+/* 				pmlmeext = &padapter->mlmeextpriv; */
+/* 				pmlmeinfo = &pmlmeext->mlmext_info; */
+/* 				bcn_interval = *((u16*)pval); */
+
+/* 				if ((pmlmeinfo->state&0x03) == WIFI_FW_AP_STATE) */
+/* 				{ */
+/* 					RTW_INFO("%s==> bcn_interval:%d, eraly_int:%d\n", __FUNCTION__, bcn_interval, bcn_interval>>1); */
+/* 					rtw_write8(padapter, REG_DRVERLYINT, bcn_interval>>1);// 50ms for sdio */
+/* 				} */
+/* 			} */
+/* #endif // CONFIG_INTERRUPT_BASED_TXBCN_EARLY_INT */
 			break;
 
 		case HW_VAR_SLOT_TIME:
