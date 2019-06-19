@@ -74,7 +74,7 @@ static void dm_CheckPbcGPIO(_adapter *padapter)
 		return;
 
 #if defined(CONFIG_USB_HCI) || defined(CONFIG_SDIO_HCI)
-	
+
 	tmp1byte = rtw_read8(padapter, REG_GPIO_EXT_CTRL_8814A);
 	//DBG_871X("CheckPbcGPIO - %x\n", tmp1byte);
 
@@ -215,7 +215,7 @@ static void Init_ODM_ComInfo_8814(PADAPTER	Adapter)
 		cut_ver = ODM_CUT_A;
 	else if(IS_B_CUT(pHalData->version_id))
 		cut_ver = ODM_CUT_B;
-	else if(IS_C_CUT(pHalData->version_id)) 
+	else if(IS_C_CUT(pHalData->version_id))
 		cut_ver = ODM_CUT_C;
 	else if(IS_D_CUT(pHalData->version_id))
 		cut_ver = ODM_CUT_D;
@@ -224,14 +224,14 @@ static void Init_ODM_ComInfo_8814(PADAPTER	Adapter)
 	else
 		cut_ver = ODM_CUT_A;
 
-	odm_cmn_info_init(pDM_Odm,ODM_CMNINFO_FAB_VER,fab_ver);		
+	odm_cmn_info_init(pDM_Odm,ODM_CMNINFO_FAB_VER,fab_ver);
 	odm_cmn_info_init(pDM_Odm,ODM_CMNINFO_CUT_VER,cut_ver);
 
  	odm_cmn_info_init(pDM_Odm, ODM_CMNINFO_RF_ANTENNA_TYPE, pHalData->TRxAntDivType);
 
 	//odm_cmn_info_init(pDM_Odm, ODM_CMNINFO_IQKFWOFFLOAD, pHalData->RegIQKFWOffload);
 
-	
+
 }
 
 void
@@ -328,17 +328,13 @@ void rtl8814_init_dm_priv(IN PADAPTER Adapter)
 	if (pHalData->EEPROMBluetoothCoexist == _FALSE)
 	#endif
 	{
-		pHalData->RegIQKFWOffload = 1;
-		rtw_sctx_init(&pHalData->iqk_sctx, 0);
+		if (IS_HARDWARE_TYPE_8814A(Adapter))
+			pHalData->RegIQKFWOffload = 1;
 	}
 #endif
 
 	Init_ODM_ComInfo_8814(Adapter);
-	odm_init_all_timers(podmpriv );
-	//PHYDM_InitDebugSetting(podmpriv);
-
-	pHalData->CurrentTxPwrIdx = 18;
-
+	odm_init_all_timers(podmpriv);
 }
 
 void rtl8814_deinit_dm_priv(IN PADAPTER Adapter)
@@ -357,7 +353,7 @@ void rtl8814_deinit_dm_priv(IN PADAPTER Adapter)
 void	AntDivCompare8814(PADAPTER Adapter, WLAN_BSSID_EX *dst, WLAN_BSSID_EX *src)
 {
 	//PADAPTER Adapter = pDM_Odm->Adapter ;
-	
+
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(Adapter);
 	if(0 != pHalData->AntDivCfg )
 	{
@@ -367,7 +363,7 @@ void	AntDivCompare8814(PADAPTER Adapter, WLAN_BSSID_EX *dst, WLAN_BSSID_EX *src)
 		if(dst->Rssi >=  src->Rssi )//keep org parameter
 		{
 			src->Rssi = dst->Rssi;
-			src->PhyInfo.Optimum_antenna = dst->PhyInfo.Optimum_antenna;						
+			src->PhyInfo.Optimum_antenna = dst->PhyInfo.Optimum_antenna;
 		}
 	}
 }
@@ -375,12 +371,12 @@ void	AntDivCompare8814(PADAPTER Adapter, WLAN_BSSID_EX *dst, WLAN_BSSID_EX *src)
 // Add new function to reset the state of antenna diversity before link.
 u8 AntDivBeforeLink8814(PADAPTER Adapter )
 {
-	
-	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(Adapter);	
+
+	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(Adapter);
 	struct dm_struct		* 	pDM_Odm =&pHalData->odmpriv;
 	SWAT_T		*pDM_SWAT_Table = &pDM_Odm->DM_SWAT_Table;
 	struct mlme_priv	*pmlmepriv = &(Adapter->mlmepriv);
-	
+
 	// Condition that does not need to use antenna diversity.
 	if(pHalData->AntDivCfg==0)
 	{
@@ -388,8 +384,8 @@ u8 AntDivBeforeLink8814(PADAPTER Adapter )
 		return _FALSE;
 	}
 
-	if(check_fwstate(pmlmepriv, _FW_LINKED) == _TRUE)	
-	{		
+	if(check_fwstate(pmlmepriv, _FW_LINKED) == _TRUE)
+	{
 		return _FALSE;
 	}
 
@@ -408,8 +404,7 @@ u8 AntDivBeforeLink8814(PADAPTER Adapter )
 	{
 		pDM_SWAT_Table->SWAS_NoLink_State = 0;
 		return _FALSE;
-	}	
+	}
 
 }
 #endif //CONFIG_ANTENNA_DIVERSITY
-
