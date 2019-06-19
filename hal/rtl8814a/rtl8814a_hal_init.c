@@ -147,14 +147,15 @@ _FWDownloadEnable_8814A(
 }
 
 #define MAX_REG_BOLCK_SIZE	196
-
-VOID
+static int
 _BlockWrite_8814A(
 	IN		PADAPTER		Adapter,
 	IN		PVOID			buffer,
 	IN		u32			buffSize
 	)
 {
+	int ret = _SUCCESS;
+
 	u32			blockSize_p1 = 4;	// (Default) Phase #1 : PCI muse use 4-byte write to download FW
 	u32			blockSize_p2 = 8;	// Phase #2 : Use 8-byte, if Phase#1 use big size to write FW.
 	u32			blockSize_p3 = 1;	// Phase #3 : Use 1-byte, the remnant of FW image.
@@ -162,6 +163,10 @@ _BlockWrite_8814A(
 	u32			remainSize_p1 = 0, remainSize_p2 = 0;
 	u8*			bufferPtr	= (u8*)buffer;
 	u32			i=0, offset=0;
+#ifdef CONFIG_PCI_HCI
+	u8			remainFW[4] = {0, 0, 0, 0};
+	u8			*p = NULL;
+#endif
 
 #ifdef CONFIG_USB_HCI
 	blockSize_p1	= MAX_REG_BOLCK_SIZE; // Use 196-byte write to download FW
@@ -175,11 +180,33 @@ _BlockWrite_8814A(
 
 	for(i = 0 ; i < blockCount_p1 ; i++){
 		#if (DEV_BUS_TYPE == RT_USB_INTERFACE)
-		rtw_writeN(Adapter, (FW_START_ADDRESS + i * blockSize_p1), blockSize_p1,(bufferPtr + i * blockSize_p1));
+		ret = rtw_writeN(Adapter, (FW_START_ADDRESS + i * blockSize_p1), blockSize_p1,(bufferPtr + i * blockSize_p1));
 		#else
-		rtw_write32(Adapter, (FW_START_ADDRESS + i * blockSize_p1), *((pu4Byte)(bufferPtr + i * blockSize_p1)));
+		ret = rtw_write32(Adapter, (FW_START_ADDRESS + i * blockSize_p1), *((pu4Byte)(bufferPtr + i * blockSize_p1)));
 		#endif
+
+		if (ret == _FAIL)
+			goto exit;
 	}
+
+#ifdef CONFIG_PCI_HCI
+	p = (u8 *)((u32 *)(bufferPtr + blockCount_p1 * blockSize_p1));
+	if (remainSize_p1) {
+		switch (remainSize_p1) {
+		case 0:
+			break;
+		case 3:
+			remainFW[2] = *(p + 2);
+		case 2:
+			remainFW[1] = *(p + 1);
+		case 1:
+			remainFW[0] = *(p);
+			ret = rtw_write32(padapter, (FW_START_ADDRESS + blockCount_p1 * blockSize_p1),
+					  le32_to_cpu(*(u32 *)remainFW));
+		}
+		return ret;
+	}
+#endif
 
 	//3 Phase #2
 	if(remainSize_p1){
@@ -190,7 +217,11 @@ _BlockWrite_8814A(
 
 		#if (DEV_BUS_TYPE == RT_USB_INTERFACE)
 		for(i = 0 ; i < blockCount_p2 ; i++){
-			rtw_writeN(Adapter, (FW_START_ADDRESS + offset+i*blockSize_p2), blockSize_p2,(bufferPtr + offset+i*blockSize_p2));
+			ret = rtw_writeN(Adapter, (FW_START_ADDRESS + offset+i*blockSize_p2), blockSize_p2,(bufferPtr + offset+i*blockSize_p2));
+
+			if (ret == _FAIL)
+				goto exit;
+
 		}
 		#endif
 	}
@@ -204,11 +235,17 @@ _BlockWrite_8814A(
 
 		for(i = 0 ; i < blockCount_p3 ; i++){
 			rtw_write8(Adapter, (FW_START_ADDRESS + offset + i), *(bufferPtr +offset+ i));
+
+			if (ret == _FAIL)
+				goto exit;
 		}
 	}
+
+exit:
+	return ret;
 }
 
-VOID
+static int
 _PageWrite_8814A(
 	IN		PADAPTER		Adapter,
 	IN		u32			page,
@@ -222,7 +259,7 @@ _PageWrite_8814A(
 	value8 = (rtw_read8(Adapter, REG_8051FW_CTRL_8814A+2)& 0xF8 ) | u8Page ;
 	rtw_write8(Adapter,REG_8051FW_CTRL_8814A+2,value8);
 
-	_BlockWrite_8814A(Adapter,buffer,size);
+	return _BlockWrite_8814A(Adapter,buffer,size);
 }
 
 VOID
@@ -245,16 +282,18 @@ _FillDummy_8814A(
 	*pFwLen = FwLen;
 }
 
-VOID
+static int
 _WriteFW_8814A(
 	IN		PADAPTER		Adapter,
 	IN		PVOID			buffer,
 	IN		u32			size
 	)
 {
-	u32 			pageNums,remainSize ;
-	u32 			page,offset;
-	u8*			bufferPtr = (u8*)buffer;
+
+	int	ret = _SUCCESS;
+	u32 pageNums,remainSize ;
+	u32 page,offset;
+	u8	*bufferPtr = (u8*)buffer;
 
 #ifdef CONFIG_PCI_HCI
 	// 20100120 Joseph: Add for 88CE normal chip.
@@ -262,22 +301,29 @@ _WriteFW_8814A(
 	_FillDummy_8814A(bufferPtr, &size);
 #endif //CONFIG_PCI_HCI
 
-	pageNums = size / MAX_PAGE_SIZE ;
+	pageNums = size / MAX_DLFW_PAGE_SIZE ;
+	/* RT_ASSERT((pageNums <= 4), ("Page numbers should not greater then 4\n")); */
+	remainSize = size % MAX_DLFW_PAGE_SIZE;
 
-	//RT_ASSERT((pageNums <= 8), ("Page numbers should not greater then 8 \n"));
+	for (page = 0; page < pageNums; page++) {
+		offset = page * MAX_DLFW_PAGE_SIZE;
+		ret = _PageWrite_8814A(Adapter, page, bufferPtr + offset, MAX_DLFW_PAGE_SIZE);
 
-	remainSize = size % MAX_PAGE_SIZE;
-
-	for(page = 0; page < pageNums;  page++){
-		offset = page *MAX_PAGE_SIZE;
-		_PageWrite_8814A(Adapter,page, (bufferPtr+offset),MAX_PAGE_SIZE);
-		rtw_udelay_os(2);
+		if (ret == _FAIL)
+			goto exit;
 	}
-	if(remainSize){
-		offset = pageNums *MAX_PAGE_SIZE;
+	if (remainSize) {
+		offset = pageNums * MAX_DLFW_PAGE_SIZE;
 		page = pageNums;
-		_PageWrite_8814A(Adapter,page, (bufferPtr+offset),remainSize);
+		ret = _PageWrite_8814A(Adapter, page, bufferPtr + offset, remainSize);
+
+		if (ret == _FAIL)
+			goto exit;
+
 	}
+
+exit:
+	return ret;
 }
 
 VOID
@@ -500,196 +546,35 @@ SetDownLoadFwRsvdPagePkt_8814A(
 	//ReturnGenTempBuffer(pAdapter, pGenBufReservedPagePacket);
 }
 
-
-VOID
-HalROMDownloadFWRSVDPage8814A(
-	IN	PADAPTER			Adapter,
-	IN	PVOID				buffer,
-	IN	u32				Len
-)
+static s32 polling_fwdl_chksum(_adapter *adapter, u32 min_cnt, u32 timeout_ms)
 {
-	u8	u1bTmp=0, tmpReg422=0;
-	u8	BcnValidReg=0,TxBcReg=0;
-	BOOLEAN	bSendBeacon=_FALSE, bDownLoadRSVDPageOK = _FALSE;
-	u8*  pbuffer = buffer;
+	s32 ret = _FAIL;
+	u32 value32;
+	systime start = rtw_get_current_time();
+	u32 cnt = 0;
 
-	BOOLEAN fs = _TRUE, ls = _FALSE;
-	u8	FWHeaderSize = 64, PageSize = 128 ;
-	u16 RsvdPageNum = 0;
-	u32 dmem_pkt_size = 0, iram_pkt_size = 0 ,MaxRsvdPageBufSize = 0;
-	u32 last_block_size = 0, filesize_ram_block = 0, pkt_offset = 0;
-	u32 txpktbuf_bndy = 0;
-	u32	BeaconHeaderInTxPacketBuf = 0, MEMOffsetInTxPacketBuf  = 0;
+	/* polling CheckSum report */
+	do {
+		cnt++;
+		value32 = rtw_read32(adapter, REG_MCUFWDL);
+		if (value32 & FWDL_ChkSum_rpt || RTW_CANNOT_IO(adapter))
+			break;
+		rtw_yield_os();
+	} while (rtw_get_passing_time_ms(start) < timeout_ms || cnt < min_cnt);
 
-	//Set REG_CR bit 8. DMA beacon by SW.
-	u1bTmp = rtw_read8(Adapter, REG_CR_8814A+1);
-	rtw_write8(Adapter,  REG_CR_8814A+1, (u1bTmp|BIT0));
-	/*RTW_INFO("%s-%d: enable SW BCN, REG_CR=0x%x\n", __func__, __LINE__, rtw_read32(Adapter, REG_CR));*/
+	if (!(value32 & FWDL_ChkSum_rpt))
+		goto exit;
 
-	// Disable Hw protection for a time which revserd for Hw sending beacon.
-	// Fix download reserved page packet fail that access collision with the protection time.
-	// 2010.05.11. Added by tynli.
-	SetBcnCtrlReg(Adapter, 0, BIT3);
-	SetBcnCtrlReg(Adapter, BIT4, 0);
+	if (rtw_fwdl_test_trigger_chksum_fail())
+		goto exit;
 
-	// Set FWHW_TXQ_CTRL 0x422[6]=0 to tell Hw the packet is not a real beacon frame.
-	tmpReg422 = rtw_read8(Adapter, REG_FWHW_TXQ_CTRL_8814A+2);
-	rtw_write8(Adapter, REG_FWHW_TXQ_CTRL_8814A+2,  tmpReg422&(~BIT6));
+	ret = _SUCCESS;
 
-	if(tmpReg422&BIT6)
-	{
-		RTW_INFO("HalROMDownloadFWRSVDPage8814A(): There is an Adapter is sending beacon.\n");
-		bSendBeacon = _TRUE;
-	}
+exit:
+	RTW_INFO("%s: Checksum report %s! (%u, %dms), REG_MCUFWDL:0x%08x\n", __FUNCTION__
+		, (ret == _SUCCESS) ? "OK" : "Fail", cnt, rtw_get_passing_time_ms(start), value32);
 
-	//Set The head page of packet of Bcnq
-	rtw_hal_get_def_var(Adapter, HAL_DEF_TX_PAGE_BOUNDARY, (u16*)&txpktbuf_bndy);
-	rtw_write16(Adapter,REG_FIFOPAGE_CTRL_2_8814A, txpktbuf_bndy);
-
-	/* RTW_INFO("HalROMDownloadFWRSVDPage8814A: txpktbuf_bndy=%d\n", txpktbuf_bndy); */
-
-	// Clear beacon valid check bit.
-	BcnValidReg = rtw_read8(Adapter, REG_FIFOPAGE_CTRL_2_8814A+1);
-	rtw_write8(Adapter, REG_FIFOPAGE_CTRL_2_8814A+1, (BcnValidReg|BIT7));
-
-	// Return Beacon TCB.
-	//ReturnBeaconQueueTcb_8814A(Adapter);
-
-	dmem_pkt_size =  (u32)GET_FIRMWARE_HDR_TOTAL_DMEM_SZ_3081(pbuffer);
-	iram_pkt_size =  (u32)GET_FIRMWARE_HDR_IRAM_SZ_3081(pbuffer);
-	dmem_pkt_size += (u32)FW_CHKSUM_DUMMY_SZ;
-	iram_pkt_size += (u32)FW_CHKSUM_DUMMY_SZ;
-
-	if(dmem_pkt_size + iram_pkt_size + FWHeaderSize != Len)
-	{
-		RTW_INFO("ERROR: Fw Hdr size do not match the real fw size!!\n");
-		RTW_INFO("dmem_pkt_size = %d, iram_pkt_size = %d,FWHeaderSize = %d, Len = %d!!\n",dmem_pkt_size,iram_pkt_size,FWHeaderSize,Len);
-		return;
-	}
-	RTW_INFO("dmem_pkt_size = %d, iram_pkt_size = %d,FWHeaderSize = %d, Len = %d!!\n",dmem_pkt_size,iram_pkt_size,FWHeaderSize,Len);
-
-	// download rsvd page.
-	//RsvdPageNum = GetTxBufferRsvdPageNum8814A(Adapter, _FALSE);
-#ifdef CONFIG_BCN_IC
-	/* TODO: check tx buffer and DMA size */
-	MaxRsvdPageBufSize = MAX_CMDBUF_SZ-TXDESC_OFFSET;
-#else
-	MaxRsvdPageBufSize = MAX_XMIT_EXTBUF_SZ-TXDESC_OFFSET;//RsvdPageNum*PageSize - 40 -16 /*modified for usb*/;//TX_INFO_SIZE_8814AE;
-#endif
-	RTW_INFO("MaxRsvdPageBufSize %d,  Total len %d\n",MaxRsvdPageBufSize,Len);
-
-	BeaconHeaderInTxPacketBuf = txpktbuf_bndy * PageSize;
-	MEMOffsetInTxPacketBuf = OCPBASE_TXBUF_3081 + BeaconHeaderInTxPacketBuf + 40;//TX_INFO_SIZE_8814AE;
-	//download DMEM
-	while(dmem_pkt_size > 0)
-	{
-		if(dmem_pkt_size > MaxRsvdPageBufSize)
-		{
-			filesize_ram_block = MaxRsvdPageBufSize;
-			ls = _FALSE;
-
-			last_block_size = dmem_pkt_size -MaxRsvdPageBufSize;
-			if(last_block_size < MaxRsvdPageBufSize)
-			{
-				if(((last_block_size + 40) & 0x3F)  == 0)	// Multiples of 64
-					filesize_ram_block -=4;
-			}
-		}
-		else
-		{
-			filesize_ram_block = dmem_pkt_size;
-			ls = _TRUE;
-		}
-		fs = (pkt_offset == 0 ? _TRUE: _FALSE);
-		// Return Beacon TCB.
-		//ReturnBeaconQueueTcb_8814A(Adapter);
-		//RTW_INFO("%d packet offset %d dmem_pkt_size %d\n", __LINE__,pkt_offset, dmem_pkt_size);
-		SetDownLoadFwRsvdPagePkt_8814A(Adapter, pbuffer+FWHeaderSize+pkt_offset, filesize_ram_block);
-		bDownLoadRSVDPageOK = WaitDownLoadRSVDPageOK_3081(Adapter);
-		if(!bDownLoadRSVDPageOK)
-		{
-			RTW_INFO("ERROR: DMEM  bDownLoadRSVDPageOK is false!!\n");
-			return;
-		}
-
-		IDDMADownLoadFW_3081(Adapter,MEMOffsetInTxPacketBuf,OCPBASE_DMEM_3081+pkt_offset,filesize_ram_block,fs,ls);
-		dmem_pkt_size -= filesize_ram_block;
-		pkt_offset += filesize_ram_block;
-	}
-
-	//download IRAM
-	pkt_offset = 0;
-	while(iram_pkt_size > 0)
-	{
-		if(iram_pkt_size > MaxRsvdPageBufSize)
-		{
-			filesize_ram_block = MaxRsvdPageBufSize;
-			ls = _FALSE;
-
-			last_block_size = iram_pkt_size -MaxRsvdPageBufSize;
-			if(last_block_size < MaxRsvdPageBufSize)
-			{
-				if(((last_block_size + 40) & 0x3F)  == 0)	// Multiples of 64
-					filesize_ram_block -=4;
-			}
-		}
-		else
-		{
-			filesize_ram_block = iram_pkt_size;
-			ls = _TRUE;
-		}
-
-		fs = (pkt_offset == 0 ? _TRUE: _FALSE);
-		// Return Beacon TCB.
-		//ReturnBeaconQueueTcb_8814A(Adapter);
-		//RTW_INFO("%d packet offset %d iram_pkt_size %d\n", __LINE__,pkt_offset, iram_pkt_size);
-		SetDownLoadFwRsvdPagePkt_8814A(Adapter, pbuffer+Len-iram_pkt_size, filesize_ram_block);
-
-		bDownLoadRSVDPageOK = WaitDownLoadRSVDPageOK_3081(Adapter);
-		if(!bDownLoadRSVDPageOK)
-		{
-			RTW_INFO("ERROR: IRAM  bDownLoadRSVDPageOK is false!!\n");
-			return;
-		}
-
-		IDDMADownLoadFW_3081(Adapter,MEMOffsetInTxPacketBuf,OCPBASE_IMEM_3081+pkt_offset,filesize_ram_block,fs,ls);
-
-		iram_pkt_size -= filesize_ram_block;
-		pkt_offset += filesize_ram_block;
-	}
-
-	// Enable Bcn
-	SetBcnCtrlReg(Adapter, BIT3, 0);
-	SetBcnCtrlReg(Adapter, 0, BIT4);
-
-	// To make sure that if there exists an adapter which would like to send beacon.
-	// If exists, the origianl value of 0x422[6] will be 1, we should check this to
-	// prevent from setting 0x422[6] to 0 after download reserved page, or it will cause
-	// the beacon cannot be sent by HW.
-	// 2010.06.23. Added by tynli.
-	if(bSendBeacon)
-	{
-		rtw_write8(Adapter, REG_FWHW_TXQ_CTRL_8814A+2, tmpReg422);
-	}
-
-	// Do not enable HW DMA BCN or it will cause Pcie interface hang by timing issue. 2011.11.24. by tynli.
-	//if(!Adapter->bEnterPnpSleep)
-	{
-		// Clear CR[8] or beacon packet will not be send to TxBuf anymore.
-		u1bTmp = rtw_read8(Adapter, REG_CR_8814A+1);
-		rtw_write8(Adapter, REG_CR_8814A+1, (u1bTmp&(~BIT0)));
-	}
-
-	u1bTmp=rtw_read8(Adapter, REG_8051FW_CTRL_8814A); //add by gw for flags to show the fw download ok 20130826
-	if( u1bTmp&DMEM_CHKSUM_OK)
-	{
-		if(u1bTmp&IMEM_CHKSUM_OK)
-		{
-			u1Byte tem;
-			tem=rtw_read8(Adapter, REG_8051FW_CTRL_8814A+1);
-			rtw_write8(Adapter, REG_8051FW_CTRL_8814A+1,(tem|BIT6));
-		}
-	}
+	return ret;
 }
 
 s32
@@ -821,7 +706,19 @@ FirmwareDownload8814A(
 
 	_3081Disable8814A(Adapter);//add by gw 2013026 for disable mcu core
 
-	HalROMDownloadFWRSVDPage8814A(Adapter,pFirmwareBuf,FirmwareLen);
+	while (!RTW_CANNOT_IO(Adapter)
+	       && (write_fw++ < 3 || rtw_get_passing_time_ms(fwdl_start_time) < 500)) {
+		/* reset FWDL chksum */
+		rtw_write8(Adapter, REG_MCUFWDL, rtw_read8(Adapter, REG_MCUFWDL) | FWDL_ChkSum_rpt);
+
+		rtStatus = _WriteFW_8814A(Adapter, pFirmwareBuf, FirmwareLen);
+		if (rtStatus != _SUCCESS)
+			continue;
+
+		rtStatus = polling_fwdl_chksum(Adapter, 5, 50);
+		if (rtStatus == _SUCCESS)
+			break;
+	}
 
 	_3081Enable8814A(Adapter);//add by gw 2013026 for Enable mcu core
 

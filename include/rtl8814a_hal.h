@@ -171,8 +171,6 @@ typedef struct _RT_FIRMWARE_8814 {
 #define BCN_DMA_ATIME_INT_TIME_8814		0x02
 
 
-#define MAX_PAGE_SIZE			4096	/* @ page : 4k bytes */
-
 #define EFUSE_MAX_SECTION_JAGUAR				64
 
 #define	HWSET_MAX_SIZE_8814A			512
