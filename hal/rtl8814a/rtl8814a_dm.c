@@ -263,13 +263,15 @@ rtl8814_HalDmWatchDog(
 	BOOLEAN		bFwPSAwake = _TRUE;
 	PHAL_DATA_TYPE	pHalData = GET_HAL_DATA(Adapter);
 	struct dm_struct		*pDM_Odm = &(pHalData->odmpriv);
+	struct pwrctrl_priv *pwrpriv = adapter_to_pwrctl(Adapter);
+	u8 in_lps = _FALSE;
 
 
 	if (!rtw_is_hw_init_completed(Adapter))
 		goto skip_dm;
 
 #ifdef CONFIG_LPS
-	bFwCurrentInPSMode = adapter_to_pwrctl(Adapter)->bFwCurrentInPSMode;
+	bFwCurrentInPSMode = pwrpriv->bFwCurrentInPSMode;
 	rtw_hal_get_hwreg(Adapter, HW_VAR_FWLPS_RF_ON, &bFwPSAwake);
 #endif
 
@@ -303,7 +305,12 @@ rtl8814_HalDmWatchDog(
 #ifdef CONFIG_DISABLE_ODM
 	goto skip_dm;
 #endif
-	rtw_phydm_watchdog(Adapter);
+#ifdef CONFIG_LPS
+	if (pwrpriv->bLeisurePs && bFwCurrentInPSMode && pwrpriv->pwr_mode != PS_MODE_ACTIVE)
+		in_lps = _TRUE;
+#endif
+
+	rtw_phydm_watchdog(Adapter, in_lps);
 
 skip_dm:
 
