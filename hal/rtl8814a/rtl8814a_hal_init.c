@@ -1673,13 +1673,41 @@ hal_ReadAntennaDiversity8814A(
 	IN	BOOLEAN			AutoLoadFail
 	)
 {
-	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(pAdapter);
+#ifdef CONFIG_ANTENNA_DIVERSITY
+	HAL_DATA_TYPE *pHalData = GET_HAL_DATA(pAdapter);
+	struct registry_priv *registry_par = &pAdapter->registrypriv;
 
-	pHalData->TRxAntDivType = NO_ANTDIV;
-	pHalData->AntDivCfg = 0;
+	if (!AutoLoadFail) {
+		if (registry_par->antdiv_cfg == 2) {
+			if (PROMContent[EEPROM_RF_BOARD_OPTION_8814] == 0xFF)
+				pHalData->AntDivCfg = (EEPROM_DEFAULT_BOARD_OPTION & BIT3) ? 1 : 0;
+			else
+				pHalData->AntDivCfg = (PROMContent[EEPROM_RF_BOARD_OPTION_8814] & BIT3) ? 1 : 0;
+		} else {
+			/* by registry */
+			pHalData->AntDivCfg = registry_par->antdiv_cfg;
+		}
 
-	RTW_INFO("SWAS: bHwAntDiv = %x, TRxAntDivType = %x\n",
-                                                pHalData->AntDivCfg, pHalData->TRxAntDivType);
+		if (registry_par->antdiv_type == 0)
+			pHalData->TRxAntDivType = PROMContent[EEPROM_RF_ANTENNA_OPT_8814];
+		else
+			pHalData->TRxAntDivType = registry_par->antdiv_type;
+
+	} else {
+		/* Disable */
+		pHalData->AntDivCfg = 0;
+	}
+
+#ifdef CONFIG_BT_COEXIST
+	if (hal_btcoex_1Ant(pAdapter)) {
+		pHalData->AntDivCfg = 0;
+		/*Add by YiWei , btcoex 1 ant module , ant band switch by btcoex , driver have to disable  ant band switch feature*/
+		pAdapter->registrypriv.drv_ant_band_switch = 0;
+	}
+#endif
+
+	RTW_INFO("[ANTDIV] AntDivCfg=%d, TRxAntDivType=0x%02x\n", pHalData->AntDivCfg, pHalData->TRxAntDivType);
+#endif
 }
 
 VOID
