@@ -1105,21 +1105,19 @@ todo */
 VOID
 PHY_GetTxPowerLevel8814(
 	IN	PADAPTER		Adapter,
-	OUT s32*    		powerlevel
-	)
+	OUT s32		*powerlevel
+)
 {
-	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(Adapter);
-	*powerlevel = pHalData->CurrentTxPwrIdx;
 #if 0
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(Adapter);
 	PMGNT_INFO		pMgntInfo = &(Adapter->MgntInfo);
 	s4Byte			TxPwrDbm = 13;
 
-	if ( pMgntInfo->ClientConfigPwrInDbm != UNSPECIFIED_PWR_DBM )
+	if (pMgntInfo->ClientConfigPwrInDbm != UNSPECIFIED_PWR_DBM)
 		*powerlevel = pMgntInfo->ClientConfigPwrInDbm;
 	else
 		*powerlevel = TxPwrDbm;
-#endif //0
+#endif
 }
 
 VOID
