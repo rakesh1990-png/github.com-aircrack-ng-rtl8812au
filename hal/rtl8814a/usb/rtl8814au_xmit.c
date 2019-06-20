@@ -359,11 +359,10 @@ s32 rtl8814au_xmit_buf_handler(PADAPTER padapter)
 	}
 
 	if (RTW_CANNOT_RUN(padapter)) {
-		RTW_ERR(
-				, ("%s: bDriverStopped(%s) bSurpriseRemoved(%s)!\n"
-				, __func__
-				, rtw_is_drv_stopped(padapter)?"True":"False"
-				, rtw_is_surprise_removed(padapter)?"True":"False");
+		RTW_DBG(FUNC_ADPT_FMT "- bDriverStopped(%s) bSurpriseRemoved(%s)\n",
+			FUNC_ADPT_ARG(padapter),
+			rtw_is_drv_stopped(padapter) ? "True" : "False",
+			rtw_is_surprise_removed(padapter) ? "True" : "False");
 		return _FAIL;
 	}
 
