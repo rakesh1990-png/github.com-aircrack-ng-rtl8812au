@@ -32,7 +32,7 @@ void ConfigureTxpowerTrack_8814A(
 
 VOID
 GetDeltaSwingTable_8814A(
-	IN 	PDM_ODM_T			pDM_Odm,
+	IN 	PDM_ODM_T			dm,
 	OUT pu1Byte 			*TemperatureUP_A,
 	OUT pu1Byte 			*TemperatureDOWN_A,
 	OUT pu1Byte 			*TemperatureUP_B,
@@ -41,7 +41,7 @@ GetDeltaSwingTable_8814A(
 
 VOID
 GetDeltaSwingTable_8814A_PathCD(
-	IN 	PDM_ODM_T			pDM_Odm,
+	IN 	PDM_ODM_T			dm,
 	OUT pu1Byte 			*TemperatureUP_C,
 	OUT pu1Byte 			*TemperatureDOWN_C,
 	OUT pu1Byte 			*TemperatureUP_D,
@@ -51,7 +51,7 @@ GetDeltaSwingTable_8814A_PathCD(
 
 VOID
 ODM_TxPwrTrackSetPwr8814A(
-	PDM_ODM_T			pDM_Odm,
+	PDM_ODM_T			dm,
 	PWRTRACK_METHOD 	Method,
 	u1Byte 				RFPath,
 	u1Byte 				ChannelMappedIndex
@@ -59,7 +59,7 @@ ODM_TxPwrTrackSetPwr8814A(
 
 u1Byte
 CheckRFGainOffset(
-	PDM_ODM_T			pDM_Odm,
+	PDM_ODM_T			dm,
 	u1Byte				RFPath
 	);
 
@@ -69,7 +69,7 @@ CheckRFGainOffset(
 //
 void	
 PHY_LCCalibrate_8814A(
-	IN PDM_ODM_T		pDM_Odm
+	IN PDM_ODM_T		dm
 	);
 
 //
@@ -78,9 +78,9 @@ PHY_LCCalibrate_8814A(
 void	
 PHY_APCalibrate_8814A(		
 #if (DM_ODM_SUPPORT_TYPE & ODM_AP)
-	IN PDM_ODM_T		pDM_Odm,
+	IN PDM_ODM_T		dm,
 #else
-	IN	PADAPTER	pAdapter,
+	IN	void *	padapter,
 #endif
 	IN 	s1Byte		delta
 	);
@@ -88,17 +88,17 @@ PHY_APCalibrate_8814A(
 
 VOID	                                                 
 PHY_DPCalibrate_8814A(                                   
-	IN 	PDM_ODM_T	pDM_Odm                             
+	IN 	PDM_ODM_T	dm                             
 	);
 
 
 VOID PHY_SetRFPathSwitch_8814A(
 #if (DM_ODM_SUPPORT_TYPE & ODM_AP)
-	IN PDM_ODM_T		pDM_Odm,
+	IN PDM_ODM_T		dm,
 #else
-	IN	PADAPTER	pAdapter,
+	IN	void *	padapter,
 #endif
-	IN	BOOLEAN		bMain
+	IN	boolean		bMain
 	);
 
 								

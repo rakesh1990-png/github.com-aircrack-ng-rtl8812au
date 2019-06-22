@@ -40,7 +40,7 @@
 //
 // Bitmap Definition
 //
-#define	BIT_FA_RESET_8814A			BIT0
+#define	BIT_FA_RESET_8814A			BIT(0)
 
 
 #endif

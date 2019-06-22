@@ -37,7 +37,7 @@ void ConfigureTxpowerTrack_8814A(
 
 VOID
 GetDeltaSwingTable_8814A(
-	struct dm_struct    *pDM_Odm,
+	struct dm_struct    *dm,
 	u8* 			*TemperatureUP_A,
 	u8* 			*TemperatureDOWN_A,
 	u8* 			*TemperatureUP_B,
@@ -46,7 +46,7 @@ GetDeltaSwingTable_8814A(
 
 VOID
 GetDeltaSwingTable_8814A_PathCD(
-	struct dm_struct    *pDM_Odm,
+	struct dm_struct    *dm,
 	u8* 			*TemperatureUP_C,
 	u8* 			*TemperatureDOWN_C,
 	u8* 			*TemperatureUP_D,
@@ -61,7 +61,7 @@ ConfigureTxpowerTrack_8814A(
 
 VOID
 ODM_TxPwrTrackSetPwr8814A(
-	IN PDM_ODM_T			pDM_Odm,
+	IN PDM_ODM_T			dm,
 	IN PWRTRACK_METHOD 	Method,
 	IN u1Byte 				RFPath,
 	IN u1Byte 				ChannelMappedIndex
@@ -70,7 +70,7 @@ ODM_TxPwrTrackSetPwr8814A(
 
 u1Byte
 CheckRFGainOffset(
-	PDM_ODM_T			pDM_Odm,
+	PDM_ODM_T			dm,
 	PWRTRACK_METHOD 	Method,
 	u1Byte				RFPath
 	);
@@ -81,17 +81,17 @@ CheckRFGainOffset(
 //
 void	
 PHY_LCCalibrate_8814A(
-	IN PDM_ODM_T		pDM_Odm
+	IN PDM_ODM_T		dm
 );
 
 void
 phy_LCCalibrate_8814A(
 #if (DM_ODM_SUPPORT_TYPE & ODM_AP)
-			IN PDM_ODM_T		pDM_Odm,
+			IN PDM_ODM_T		dm,
 #else
-			IN	PADAPTER	pAdapter,
+			IN	void *	padapter,
 #endif
-			IN	BOOLEAN		is2T
+			IN	boolean		is2T
 );
 
 
@@ -101,22 +101,22 @@ phy_LCCalibrate_8814A(
 void	
 PHY_APCalibrate_8814A(		
 #if (DM_ODM_SUPPORT_TYPE & ODM_AP)
-	IN PDM_ODM_T		pDM_Odm,
+	IN PDM_ODM_T		dm,
 #else
-	IN	PADAPTER	pAdapter,
+	IN	void *	padapter,
 #endif
 							IN 	s1Byte		delta);
 void	
-PHY_DigitalPredistortion_8814A(		IN	PADAPTER	pAdapter);
+PHY_DigitalPredistortion_8814A(		IN	void *	padapter);
 
 
 #if 0 //FOR_8814_IQK
 VOID
 _PHY_SaveADDARegisters(
 #if (DM_ODM_SUPPORT_TYPE & ODM_AP)
-	IN PDM_ODM_T		pDM_Odm,
+	IN PDM_ODM_T		dm,
 #else
-	IN	PADAPTER	pAdapter,
+	IN	void *	padapter,
 #endif
 	IN	pu4Byte		ADDAReg,
 	IN	pu4Byte		ADDABackup,
@@ -126,21 +126,21 @@ _PHY_SaveADDARegisters(
 VOID
 _PHY_PathADDAOn(
 #if (DM_ODM_SUPPORT_TYPE & ODM_AP)
-	IN PDM_ODM_T		pDM_Odm,
+	IN PDM_ODM_T		dm,
 #else
-	IN	PADAPTER	pAdapter,
+	IN	void *	padapter,
 #endif
 	IN	pu4Byte		ADDAReg,
-	IN	BOOLEAN		isPathAOn,
-	IN	BOOLEAN		is2T
+	IN	boolean		isPathAOn,
+	IN	boolean		is2T
 	);
 
 VOID
 _PHY_MACSettingCalibration(
 #if (DM_ODM_SUPPORT_TYPE & ODM_AP)
-	IN PDM_ODM_T		pDM_Odm,
+	IN PDM_ODM_T		dm,
 #else
-	IN	PADAPTER	pAdapter,
+	IN	void *	padapter,
 #endif
 	IN	pu4Byte		MACReg,
 	IN	pu4Byte		MACBackup	
@@ -151,9 +151,9 @@ _PHY_MACSettingCalibration(
 VOID
 _PHY_PathAStandBy(
 #if (DM_ODM_SUPPORT_TYPE & ODM_AP)
-	IN PDM_ODM_T		pDM_Odm
+	IN PDM_ODM_T		dm
 #else
-	IN	PADAPTER	pAdapter
+	IN	void *	padapter
 #endif
 	);
 

@@ -59,7 +59,7 @@ ODM_TxPwrTrackSetPwr8814A(
 
 u8
 CheckRFGainOffset(
-	struct dm_struct	*pDM_Odm,
+	struct dm_struct	*dm,
 	enum pwrtrack_method 	Method,
 	u8				RFPath
 	);
@@ -84,9 +84,9 @@ phy_lc_calibrate_8814a(
 void	
 PHY_APCalibrate_8814A(		
 #if (DM_ODM_SUPPORT_TYPE & ODM_AP)
-	struct dm_struct	*		pDM_Odm,
+	struct dm_struct	*		dm,
 #else
-	IN	PADAPTER	pAdapter,
+	IN	void *	padapter,
 #endif
 	IN 	s1Byte		delta
 	);
@@ -94,15 +94,15 @@ PHY_APCalibrate_8814A(
 
 VOID	                                                 
 PHY_DPCalibrate_8814A(                                   
-	struct dm_struct	*	pDM_Odm                             
+	struct dm_struct	*	dm                             
 	);
 
 
 VOID phy_set_rf_path_switch_8814a(
 #if ((DM_ODM_SUPPORT_TYPE & ODM_AP) || (DM_ODM_SUPPORT_TYPE == ODM_CE))
-	struct dm_struct	*		pDM_Odm,
+	struct dm_struct	*		dm,
 #else
-	IN	PADAPTER	pAdapter,
+	IN	void *	padapter,
 #endif
 	boolean		bMain
 	);

@@ -29,48 +29,48 @@
 
 VOID
 odm_Write_Dynamic_CCA_8814A(
-	struct dm_struct    *pDM_Odm,
+	struct dm_struct    *dm,
 	u8			CurrentMFstate
 	);
 
 VOID
 odm_PrimaryCCA_Check_Init_8814A(
-	struct dm_struct    *pDM_Odm
+	struct dm_struct    *dm
 	);
 
 VOID
 odm_DynamicPrimaryCCA_Check_8814A(
-	struct dm_struct    *pDM_Odm
+	struct dm_struct    *dm
 	);
 
 #if (DM_ODM_SUPPORT_TYPE == ODM_WIN)
 
 VOID
 odm_DynamicPrimaryCCAMP_8814A(
-	struct dm_struct    *pDM_Odm
+	struct dm_struct    *dm
 	);
 
 #elif (DM_ODM_SUPPORT_TYPE == ODM_AP)
 
 VOID
 odm_DynamicPrimaryCCAAP_8814A(
-	struct dm_struct    *pDM_Odm
+	struct dm_struct    *dm
 	);
 
 VOID
 odm_Intf_Detection_8814A(
-	struct dm_struct    *pDM_Odm
+	struct dm_struct    *dm
 	);
 
 #endif
 
 u1Byte
 phydm_spur_nbi_setting_8814a(
-	struct dm_struct    *pDM_Odm
+	struct dm_struct    *dm
 );
 
 void odm_hw_setting_8814a(
-	struct dm_struct	*p_dm_odm
+	struct dm_struct	*dm
 	);
 
 #endif

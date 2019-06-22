@@ -18,59 +18,59 @@
 #include "../phydm_precomp.h"
 
 #if (RTL8814A_SUPPORT == 1)
-static BOOLEAN
-CheckPositive(
-	struct dm_struct    *pDM_Odm,
-	u32  Condition1,
-	u32  Condition2,
-	u32  Condition3,
-	u32  Condition4
+static boolean
+check_positive(
+	struct dm_struct    *dm,
+	u32  condition1,
+	u32  condition2,
+	u32  condition3,
+	u32  condition4
 )
 {
-	u1Byte    _BoardType = ((pDM_Odm->board_type & BIT4) >> 4) << 0 | /* _GLNA*/
-				((pDM_Odm->board_type & BIT3) >> 3) << 1 | /* _GPA*/ 
-				((pDM_Odm->board_type & BIT7) >> 7) << 2 | /* _ALNA*/
-				((pDM_Odm->board_type & BIT6) >> 6) << 3 | /* _APA */
-				((pDM_Odm->board_type & BIT2) >> 2) << 4;  /* _BT*/  
+	u1Byte    _board_type = ((dm->board_type & BIT(4)) >> 4) << 0 | /* _GLNA*/
+				((dm->board_type & BIT(3)) >> 3) << 1 | /* _GPA*/ 
+				((dm->board_type & BIT(7)) >> 7) << 2 | /* _ALNA*/
+				((dm->board_type & BIT(6)) >> 6) << 3 | /* _APA */
+				((dm->board_type & BIT(2)) >> 2) << 4;  /* _BT*/  
 
-	u4Byte	cond1   = Condition1, cond2 = Condition2, cond3 = Condition3, cond4 = Condition4;
-	u4Byte    driver1 = pDM_Odm->cut_version       << 24 | 
-				(pDM_Odm->support_interface & 0xF0) << 16 | 
-				pDM_Odm->support_platform  << 16 | 
-				pDM_Odm->package_type      << 12 | 
-				(pDM_Odm->support_interface & 0x0F) << 8  |
-				_BoardType;
+	u4Byte	cond1   = condition1, cond2 = condition2, cond3 = condition3, cond4 = condition4;
+	u4Byte    driver1 = dm->cut_version       << 24 | 
+				(dm->support_interface & 0xF0) << 16 | 
+				dm->support_platform  << 16 | 
+				dm->package_type      << 12 | 
+				(dm->support_interface & 0x0F) << 8  |
+				_board_type;
 
-	u4Byte    driver2 = (pDM_Odm->type_glna & 0xFF) <<  0 |  
-				(pDM_Odm->type_gpa & 0xFF)  <<  8 | 
-				(pDM_Odm->type_alna & 0xFF) << 16 | 
-				(pDM_Odm->type_apa & 0xFF)  << 24; 
+	u4Byte    driver2 = (dm->type_glna & 0xFF) <<  0 |  
+				(dm->type_gpa & 0xFF)  <<  8 | 
+				(dm->type_alna & 0xFF) << 16 | 
+				(dm->type_apa & 0xFF)  << 24; 
 
 u4Byte    driver3 = 0;
 
-	u4Byte    driver4 = (pDM_Odm->type_glna & 0xFF00) >>  8 |
-				(pDM_Odm->type_gpa & 0xFF00) |
-				(pDM_Odm->type_alna & 0xFF00) << 8 |
-				(pDM_Odm->type_apa & 0xFF00)  << 16;
+	u4Byte    driver4 = (dm->type_glna & 0xFF00) >>  8 |
+				(dm->type_gpa & 0xFF00) |
+				(dm->type_alna & 0xFF00) << 8 |
+				(dm->type_apa & 0xFF00)  << 16;
 
-	ODM_RT_TRACE(pDM_Odm, ODM_COMP_INIT, ODM_DBG_TRACE, 
-	("===> CheckPositive (cond1, cond2, cond3, cond4) = (0x%X 0x%X 0x%X 0x%X)\n", cond1, cond2, cond3, cond4));
-	ODM_RT_TRACE(pDM_Odm, ODM_COMP_INIT, ODM_DBG_TRACE, 
-	("===> CheckPositive (driver1, driver2, driver3, driver4) = (0x%X 0x%X 0x%X 0x%X)\n", driver1, driver2, driver3, driver4));
+	PHYDM_DBG(dm, ODM_COMP_INIT, ODM_DBG_TRACE, 
+	("===> check_positive (cond1, cond2, cond3, cond4) = (0x%X 0x%X 0x%X 0x%X)\n", cond1, cond2, cond3, cond4));
+	PHYDM_DBG(dm, ODM_COMP_INIT, ODM_DBG_TRACE, 
+	("===> check_positive (driver1, driver2, driver3, driver4) = (0x%X 0x%X 0x%X 0x%X)\n", driver1, driver2, driver3, driver4));
 
-	ODM_RT_TRACE(pDM_Odm, ODM_COMP_INIT, ODM_DBG_TRACE, 
-	("	(Platform, Interface) = (0x%X, 0x%X)\n", pDM_Odm->support_platform, pDM_Odm->support_interface));
-	ODM_RT_TRACE(pDM_Odm, ODM_COMP_INIT, ODM_DBG_TRACE, 
-	("	(Board, Package) = (0x%X, 0x%X)\n", pDM_Odm->board_type, pDM_Odm->package_type));
+	PHYDM_DBG(dm, ODM_COMP_INIT, ODM_DBG_TRACE, 
+	("	(Platform, Interface) = (0x%X, 0x%X)\n", dm->support_platform, dm->support_interface));
+	PHYDM_DBG(dm, ODM_COMP_INIT, ODM_DBG_TRACE, 
+	("	(Board, Package) = (0x%X, 0x%X)\n", dm->board_type, dm->package_type));
 
 
 	/*============== Value Defined Check ===============*/
 	/*QFN Type [15:12] and Cut Version [27:24] need to do value check*/
 	
 	if (((cond1 & 0x0000F000) != 0) && ((cond1 & 0x0000F000) != (driver1 & 0x0000F000)))
-		return FALSE;
+		return false;
 	if (((cond1 & 0x0F000000) != 0) && ((cond1 & 0x0F000000) != (driver1 & 0x0F000000)))
-		return FALSE;
+		return false;
 
 	/*=============== Bit Defined Check ================*/
 	/* We don't care [31:28] */
@@ -79,42 +79,42 @@ u4Byte    driver3 = 0;
 	driver1 &= 0x00FF0FFF; 
 
 	if ((cond1 & driver1) == cond1) {
-		u4Byte bitMask = 0;
+		u4Byte bit_mask = 0;
 
 		if ((cond1 & 0x0F) == 0) /* BoardType is DONTCARE*/
-			return TRUE;
+			return true;
 
-		if ((cond1 & BIT0) != 0) /*GLNA*/
-			bitMask |= 0x000000FF;
-		if ((cond1 & BIT1) != 0) /*GPA*/
-			bitMask |= 0x0000FF00;
-		if ((cond1 & BIT2) != 0) /*ALNA*/
-			bitMask |= 0x00FF0000;
-		if ((cond1 & BIT3) != 0) /*APA*/
-			bitMask |= 0xFF000000;
+		if ((cond1 & BIT(0)) != 0) /*GLNA*/
+			bit_mask |= 0x000000FF;
+		if ((cond1 & BIT(1)) != 0) /*GPA*/
+			bit_mask |= 0x0000FF00;
+		if ((cond1 & BIT(2)) != 0) /*ALNA*/
+			bit_mask |= 0x00FF0000;
+		if ((cond1 & BIT(3)) != 0) /*APA*/
+			bit_mask |= 0xFF000000;
 
-		if (((cond2 & bitMask) == (driver2 & bitMask)) && ((cond4 & bitMask) == (driver4 & bitMask)))  /* BoardType of each RF path is matched*/
-			return TRUE;
+		if (((cond2 & bit_mask) == (driver2 & bit_mask)) && ((cond4 & bit_mask) == (driver4 & bit_mask)))  /* BoardType of each RF path is matched*/
+			return true;
 		else
-			return FALSE;
+			return false;
 	} else
-		return FALSE;
+		return false;
 }
-static BOOLEAN
-CheckNegative(
-	struct dm_struct    *pDM_Odm,
-	u32  Condition1,
-	u32  Condition2
+static boolean
+check_negative(
+	struct dm_struct    *dm,
+	u32  condition1,
+	u32  condition2
 )
 {
-	return TRUE;
+	return true;
 }
 
 /******************************************************************************
 *                           MAC_REG.TXT
 ******************************************************************************/
 
-u4Byte Array_MP_8814A_MAC_REG[] = { 
+u4Byte array_mp_8814a_mac_reg[] = { 
 		0x010, 0x0000007C,
 		0x014, 0x000000DB,
 		0x016, 0x00000002,
@@ -263,53 +263,53 @@ u4Byte Array_MP_8814A_MAC_REG[] = {
 
 void
 odm_read_and_config_mp_8814a_mac_reg(
-	struct	dm_struct *  pDM_Odm
+	struct	dm_struct *  dm
 )
 {
 	u4Byte     i         = 0;
-	u1Byte     cCond;
-	BOOLEAN bMatched = TRUE, bSkipped = FALSE;
-	u4Byte     ArrayLen    = sizeof(Array_MP_8814A_MAC_REG)/sizeof(u4Byte);
-	pu4Byte    Array       = Array_MP_8814A_MAC_REG;
+	u1Byte     c_cond;
+	boolean is_matched = true, is_skipped = false;
+	u4Byte     array_len    = sizeof(array_mp_8814a_mac_reg)/sizeof(u4Byte);
+	pu4Byte    array       = array_mp_8814a_mac_reg;
 	
 	u4Byte	v1 = 0, v2 = 0, pre_v1 = 0, pre_v2 = 0;
 
-	ODM_RT_TRACE(pDM_Odm, ODM_COMP_INIT, ODM_DBG_LOUD, ("===> ODM_ReadAndConfig_MP_8814A_MAC_REG\n"));
+	PHYDM_DBG(dm, ODM_COMP_INIT,  ("===> ODM_ReadAndConfig_MP_8814A_MAC_REG\n"));
 
-	while ((i + 1) < ArrayLen) {
-		v1 = Array[i];
-		v2 = Array[i + 1];
+	while ((i + 1) < array_len) {
+		v1 = array[i];
+		v2 = array[i + 1];
 
-		if (v1 & (BIT31 | BIT30)) {/*positive & negative condition*/
-			if (v1 & BIT31) {/* positive condition*/
-				cCond  = (u1Byte)((v1 & (BIT29|BIT28)) >> 28);
-				if (cCond == COND_ENDIF) {/*end*/
-					bMatched = TRUE;
-					bSkipped = FALSE;
-					ODM_RT_TRACE(pDM_Odm, ODM_COMP_INIT, ODM_DBG_LOUD, ("ENDIF\n"));
-				} else if (cCond == COND_ELSE) { /*else*/
-					bMatched = bSkipped?FALSE:TRUE;
-					ODM_RT_TRACE(pDM_Odm, ODM_COMP_INIT, ODM_DBG_LOUD, ("ELSE\n"));
+		if (v1 & (BIT(31) | BIT(30))) {/*positive & negative condition*/
+			if (v1 & BIT(31)) {/* positive condition*/
+				c_cond  = (u1Byte)((v1 & (BIT(29)|BIT(28))) >> 28);
+				if (c_cond == COND_ENDIF) {/*end*/
+					is_matched = true;
+					is_skipped = false;
+					PHYDM_DBG(dm, ODM_COMP_INIT,  ("ENDIF\n"));
+				} else if (c_cond == COND_ELSE) { /*else*/
+					is_matched = is_skipped?false:true;
+					PHYDM_DBG(dm, ODM_COMP_INIT,  ("ELSE\n"));
 				} else {/*if , else if*/
 					pre_v1 = v1;
 					pre_v2 = v2;
-					ODM_RT_TRACE(pDM_Odm, ODM_COMP_INIT, ODM_DBG_LOUD, ("IF or ELSE IF\n"));
+					PHYDM_DBG(dm, ODM_COMP_INIT,  ("IF or ELSE IF\n"));
 				}
-			} else if (v1 & BIT30) { /*negative condition*/
-				if (bSkipped == FALSE) {
-					if (CheckPositive(pDM_Odm, pre_v1, pre_v2, v1, v2)) {
-						bMatched = TRUE;
-						bSkipped = TRUE;
+			} else if (v1 & BIT(30)) { /*negative condition*/
+				if (is_skipped == false) {
+					if (check_positive(dm, pre_v1, pre_v2, v1, v2)) {
+						is_matched = true;
+						is_skipped = true;
 					} else {
-						bMatched = FALSE;
-						bSkipped = FALSE;
+						is_matched = false;
+						is_skipped = false;
 					}
 				} else
-					bMatched = FALSE;
+					is_matched = false;
 			}
 		} else {
-			if (bMatched)
-				odm_ConfigMAC_8814A(pDM_Odm, v1, (u1Byte)v2);
+			if (is_matched)
+				odm_config_mac_8814a(dm, v1, (u1Byte)v2);
 		}
 		i = i + 2;
 	}

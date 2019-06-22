@@ -25,7 +25,7 @@
 
 void
 odm_ConfigRFReg_8814A(
-	struct dm_struct    *pDM_Odm,
+	struct dm_struct    *dm,
 	u32 					Addr,
 	u32 					Data,
 	enum rf_path     RF_PATH,
@@ -42,7 +42,7 @@ odm_ConfigRFReg_8814A(
 	}
 	else
 	{
-		odm_set_rf_reg(pDM_Odm, RF_PATH, RegAddr, bRFRegOffsetMask, Data);
+		odm_set_rf_reg(dm, RF_PATH, RegAddr, bRFRegOffsetMask, Data);
 		// Add 1us delay between BB/RF register setting.
 		ODM_delay_us(1);
 	}	
@@ -50,8 +50,8 @@ odm_ConfigRFReg_8814A(
 
 
 void 
-odm_ConfigRF_RadioA_8814A(
-	struct dm_struct    *pDM_Odm,
+odm_config_rf_radio_a_8814a(
+	struct dm_struct    *dm,
 	u32 					Addr,
 	u32 					Data
 	)
@@ -59,14 +59,14 @@ odm_ConfigRF_RadioA_8814A(
 	u4Byte  content = 0x1000; // RF_Content: radioa_txt
 	u4Byte	maskforPhySet= (u4Byte)(content&0xE000);
 
-    odm_ConfigRFReg_8814A(pDM_Odm, Addr, Data, RF_PATH_A, Addr|maskforPhySet);
+    odm_ConfigRFReg_8814A(dm, Addr, Data, RF_PATH_A, Addr|maskforPhySet);
 
-    ODM_RT_TRACE(pDM_Odm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigRFWithHeaderFile: [RadioA] %08X %08X\n", Addr, Data));
+    PHYDM_DBG(dm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigRFWithHeaderFile: [RadioA] %08X %08X\n", Addr, Data));
 }
 
 void 
-odm_ConfigRF_RadioB_8814A(
-	struct dm_struct    *pDM_Odm,
+odm_config_rf_radio_b_8814a(
+	struct dm_struct    *dm,
 	u32 					Addr,
 	u32 					Data
 	)
@@ -74,15 +74,15 @@ odm_ConfigRF_RadioB_8814A(
 	u4Byte  content = 0x1001; // RF_Content: radiob_txt
 	u4Byte	maskforPhySet= (u4Byte)(content&0xE000);
 
-    odm_ConfigRFReg_8814A(pDM_Odm, Addr, Data, RF_PATH_B, Addr|maskforPhySet);
+    odm_ConfigRFReg_8814A(dm, Addr, Data, RF_PATH_B, Addr|maskforPhySet);
 	
-	ODM_RT_TRACE(pDM_Odm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigRFWithHeaderFile: [RadioB] %08X %08X\n", Addr, Data));
+	PHYDM_DBG(dm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigRFWithHeaderFile: [RadioB] %08X %08X\n", Addr, Data));
     
 }
 
 void 
-odm_ConfigRF_RadioC_8814A(
-	struct dm_struct    *pDM_Odm,
+odm_config_rf_radio_c_8814a(
+	struct dm_struct    *dm,
 	u32 					Addr,
 	u32 					Data
 	)
@@ -90,15 +90,15 @@ odm_ConfigRF_RadioC_8814A(
 	u4Byte  content = 0x1001; // RF_Content: radiob_txt
 	u4Byte	maskforPhySet= (u4Byte)(content&0xE000);
 
-    odm_ConfigRFReg_8814A(pDM_Odm, Addr, Data, RF_PATH_C, Addr|maskforPhySet);
+    odm_ConfigRFReg_8814A(dm, Addr, Data, RF_PATH_C, Addr|maskforPhySet);
 	
-	ODM_RT_TRACE(pDM_Odm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigRFWithHeaderFile: [RadioC] %08X %08X\n", Addr, Data));
+	PHYDM_DBG(dm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigRFWithHeaderFile: [RadioC] %08X %08X\n", Addr, Data));
     
 }
 
 void 
-odm_ConfigRF_RadioD_8814A(
-	struct dm_struct    *pDM_Odm,
+odm_config_rf_radio_d_8814a(
+	struct dm_struct    *dm,
 	u32 					Addr,
 	u32 					Data
 	)
@@ -106,41 +106,41 @@ odm_ConfigRF_RadioD_8814A(
 	u4Byte  content = 0x1001; // RF_Content: radiob_txt
 	u4Byte	maskforPhySet= (u4Byte)(content&0xE000);
 
-    odm_ConfigRFReg_8814A(pDM_Odm, Addr, Data, RF_PATH_D, Addr|maskforPhySet);
+    odm_ConfigRFReg_8814A(dm, Addr, Data, RF_PATH_D, Addr|maskforPhySet);
 	
-	ODM_RT_TRACE(pDM_Odm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigRFWithHeaderFile: [RadioD] %08X %08X\n", Addr, Data));
+	PHYDM_DBG(dm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigRFWithHeaderFile: [RadioD] %08X %08X\n", Addr, Data));
     
 }
 
 void 
-odm_ConfigMAC_8814A(
- 	struct dm_struct    *pDM_Odm,
+odm_config_mac_8814a(
+ 	struct dm_struct    *dm,
  	u32 		Addr,
  	IN 	u1Byte 		Data
  	)
 {
-	odm_write_1byte(pDM_Odm, Addr, Data);
-    ODM_RT_TRACE(pDM_Odm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigMACWithHeaderFile: [MAC_REG] %08X %08X\n", Addr, Data));
+	odm_write_1byte(dm, Addr, Data);
+    PHYDM_DBG(dm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigMACWithHeaderFile: [MAC_REG] %08X %08X\n", Addr, Data));
 }
 
 void 
 odm_ConfigBB_AGC_8814A(
-    struct dm_struct    *pDM_Odm,
+    struct dm_struct    *dm,
     u32 		Addr,
     u32 		Bitmask,
     u32 		Data
     )
 {
-	odm_set_bb_reg(pDM_Odm, Addr, Bitmask, Data);		
+	odm_set_bb_reg(dm, Addr, Bitmask, Data);		
 	// Add 1us delay between BB/RF register setting.
 	ODM_delay_us(1);
 
-    ODM_RT_TRACE(pDM_Odm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigBBWithHeaderFile: [AGC_TAB] %08X %08X\n", Addr, Data));
+    PHYDM_DBG(dm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigBBWithHeaderFile: [AGC_TAB] %08X %08X\n", Addr, Data));
 }
 
 void
-odm_ConfigBB_PHY_REG_PG_8814A(
-	struct dm_struct    *pDM_Odm,
+odm_config_bb_phy_reg_pg_8814a(
+	struct dm_struct    *dm,
 	u32		Band,
 	u32		RfPath,
 	u32		TxNum,
@@ -158,15 +158,15 @@ odm_ConfigBB_PHY_REG_PG_8814A(
     else 
     {
 #if	!(DM_ODM_SUPPORT_TYPE&ODM_AP)
-	    phy_store_tx_power_by_rate(pDM_Odm->adapter, Band, RfPath, TxNum, Addr, Bitmask, Data);
+	    phy_store_tx_power_by_rate(dm->adapter, Band, RfPath, TxNum, Addr, Bitmask, Data);
 #endif
     }
-	ODM_RT_TRACE(pDM_Odm,ODM_COMP_INIT, ODM_DBG_LOUD, ("===> ODM_ConfigBBWithHeaderFile: [PHY_REG] %08X %08X %08X\n", Addr, Bitmask, Data));
+	PHYDM_DBG(dm,ODM_COMP_INIT,  ("===> ODM_ConfigBBWithHeaderFile: [PHY_REG] %08X %08X %08X\n", Addr, Bitmask, Data));
 }
 
 void 
-odm_ConfigBB_PHY_8814A(
-	struct dm_struct    *pDM_Odm,
+odm_config_bb_phy_8814a(
+	struct dm_struct    *dm,
     u32 		Addr,
     u32 		Bitmask,
     u32 		Data
@@ -190,17 +190,17 @@ odm_ConfigBB_PHY_8814A(
 		ODM_delay_us(1);
 	else 
 	{
-		odm_set_bb_reg(pDM_Odm, Addr, Bitmask, Data);		
+		odm_set_bb_reg(dm, Addr, Bitmask, Data);		
 	}
 	
 	// Add 1us delay between BB/RF register setting.
 	ODM_delay_us(1);
-    ODM_RT_TRACE(pDM_Odm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigBBWithHeaderFile: [PHY_REG] %08X %08X\n", Addr, Data));
+    PHYDM_DBG(dm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigBBWithHeaderFile: [PHY_REG] %08X %08X\n", Addr, Data));
 }
 
 void
-odm_ConfigBB_TXPWR_LMT_8814A(
-	struct dm_struct    *pDM_Odm,
+odm_config_bb_txpwr_lmt_8814a(
+	struct dm_struct    *dm,
 	u8*		Regulation,
 	u8*		Band,
 	u8*		Bandwidth,
@@ -211,7 +211,7 @@ odm_ConfigBB_TXPWR_LMT_8814A(
     )
 {
 #if (DM_ODM_SUPPORT_TYPE & (ODM_WIN|ODM_CE))
-	phy_set_tx_power_limit(pDM_Odm, Regulation, Band,
+	phy_set_tx_power_limit(dm, Regulation, Band,
 		Bandwidth, RateSection, RfPath, Channel, PowerLimit);
 #endif
 }
