@@ -1,5 +1,4 @@
 ## RTL8812AU/21AU and RTL8814AU drivers
-### Supports Realtek 8811, 8812, 8814 and 8821 chipsets
 
 [![Monitor mode](https://img.shields.io/badge/monitor%20mode-working-brightgreen.svg)](#)
 [![Frame Injection](https://img.shields.io/badge/frame%20injection-working-brightgreen.svg)](#)
@@ -49,7 +48,7 @@ make install
 ### Notes
 Download
 ```
-git clone -b v5.6.4 https://github.com/aircrack-ng/rtl8812au.git
+git clone -b v5.6.4.1 https://github.com/aircrack-ng/rtl8812au.git
 cd rtl*
 ```
 Package / Build dependencies (Kali)
@@ -143,9 +142,3 @@ at the end of file /etc/NetworkManager/NetworkManager.conf and restart NetworkMa
 sudo service NetworkManager restart
 ```
 
-### Other sources worth checking out
-```
-new rtw88 mac80211 driver: https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/log/rtw88
-wireless git: https://git.kernel.org/pub/scm/linux/kernel/git/jh/wireless.git/log/
-wireless testing git: https://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-testing.git/log/
-wpa_supplicant git: https://w1.fi/cgit/hostap/log/
