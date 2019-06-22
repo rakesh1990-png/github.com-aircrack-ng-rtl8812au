@@ -432,22 +432,17 @@ static s32 rtw_dump_xframe(_adapter *padapter, struct xmit_frame *pxmitframe)
 	mem_addr = pxmitframe->buf_addr;
 
 
-	for (t = 0; t < pattrib->nr_frags; t++)
-	{
+	for (t = 0; t < pattrib->nr_frags; t++)	{
 		if (inner_ret != _SUCCESS && ret == _SUCCESS)
 			ret = _FAIL;
 
-		if (t != (pattrib->nr_frags - 1))
-		{
+		if (t != (pattrib->nr_frags - 1)) {
 			RTW_DBG("pattrib->nr_frags=%d\n", pattrib->nr_frags);
 
 			sz = pxmitpriv->frag_len;
 			sz = sz - 4 - (psecuritypriv->sw_encrypt ? 0 : pattrib->icv_len);
-		}
-		else //no frag
-		{
+		} else //no frag
 			sz = pattrib->last_txcmdsz;
-		}
 
 		pull = update_txdesc(pxmitframe, mem_addr, sz, _FALSE);
 
@@ -458,11 +453,8 @@ static s32 rtw_dump_xframe(_adapter *padapter, struct xmit_frame *pxmitframe)
 			pxmitframe->buf_addr = mem_addr;
 
 			w_sz = sz + TXDESC_SIZE;
-		}
-		else
-		{
+		} else
 			w_sz = sz + TXDESC_SIZE + PACKET_OFFSET_SZ;
-		}
 
 		ff_hwaddr = rtw_get_ff_hwaddr(pxmitframe);
 
@@ -486,7 +478,7 @@ static s32 rtw_dump_xframe(_adapter *padapter, struct xmit_frame *pxmitframe)
 #else
 		inner_ret = rtw_write_port(padapter, ff_hwaddr, w_sz, (unsigned char *)pxmitbuf);
 #endif
-
+		}
 		rtw_count_tx_stats(padapter, pxmitframe, sz);
 
 		/* RTW_INFO("rtw_write_port, w_sz=%d, sz=%d, txdesc_sz=%d, tid=%d\n", w_sz, sz, w_sz-sz, pattrib->priority);       */
