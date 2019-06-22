@@ -125,10 +125,10 @@ typedef struct txdescriptor_8814 {
 #define SET_TX_DESC_HTC_8814A(__pTxDesc, __Value)								SET_BITS_TO_LE_4BYTE(__pTxDesc, 25, 1, __Value)
 #define SET_TX_DESC_LAST_SEG_8814A(__pTxDesc, __Value)						SET_BITS_TO_LE_4BYTE(__pTxDesc, 26, 1, __Value)
 #define SET_TX_DESC_LINIP_8814A(__pTxDesc, __Value)							SET_BITS_TO_LE_4BYTE(__pTxDesc, 28, 1, __Value)
-#define SET_TX_DESC_AMSDU_PAD_EN_8814A(__pTxDesc, __Value)					SET_BITS_TO_LE_4BYTE(__pTxDesc, 27, 1, __Value)
+#define SET_TX_DESC_FIRST_SEG_8814A(__pTxDesc, __Value)						SET_BITS_TO_LE_4BYTE(__pTxDesc, 27, 1, __Value)
 #define SET_TX_DESC_NO_ACM_8814A(__pTxDesc, __Value)							SET_BITS_TO_LE_4BYTE(__pTxDesc, 29, 1, __Value)
 #define SET_TX_DESC_GF_8814A(__pTxDesc, __Value)								SET_BITS_TO_LE_4BYTE(__pTxDesc, 30, 1, __Value)
-#define SET_TX_DESC_DISQSELSEQ_8814A(__pTxDesc, __Value)						SET_BITS_TO_LE_4BYTE(__pTxDesc, 31, 1, __Value)
+#define SET_TX_DESC_OWN_8814A(__pTxDesc, __Value)							SET_BITS_TO_LE_4BYTE(__pTxDesc, 31, 1, __Value)
 
 /* Dword 1 */
 #define SET_TX_DESC_MACID_8814A(__pTxDesc, __Value)							SET_BITS_TO_LE_4BYTE(__pTxDesc+4, 0, 7, __Value)
@@ -152,7 +152,7 @@ typedef struct txdescriptor_8814 {
 #define SET_TX_DESC_RDG_ENABLE_8814A(__pTxDesc, __Value)		SET_BITS_TO_LE_4BYTE(__pTxDesc+8, 13, 1, __Value)
 #define SET_TX_DESC_NULL_0_8814A(__pTxDesc, __Value)		SET_BITS_TO_LE_4BYTE(__pTxDesc+8, 14, 1, __Value)
 #define SET_TX_DESC_NULL_1_8814A(__pTxDesc, __Value)		SET_BITS_TO_LE_4BYTE(__pTxDesc+8, 15, 1, __Value)
-#define SET_TX_DESC_BK_8814A(__pTxDesc, __Value)				SET_BITS_TO_LE_4BYTE(__pTxDesc+8, 16, 1, __Value)
+#define SET_TX_DESC_AGG_BREAK_8814A(__pTxDesc, __Value)				SET_BITS_TO_LE_4BYTE(__pTxDesc+8, 16, 1, __Value)
 #define SET_TX_DESC_MORE_FRAG_8814A(__pTxDesc, __Value) SET_BITS_TO_LE_4BYTE(__pTxDesc+8, 17, 1, __Value)
 #define GET_TX_DESC_MORE_FRAG_8814A(__pTxDesc)				LE_BITS_TO_4BYTE(__pTxDesc+8, 17, 1)
 #define SET_TX_DESC_RAW_8814A(__pTxDesc, __Value) SET_BITS_TO_LE_4BYTE(__pTxDesc+8, 18, 1, __Value)

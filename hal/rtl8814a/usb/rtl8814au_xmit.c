@@ -39,11 +39,11 @@ void	rtl8814au_free_xmit_priv(_adapter *padapter)
 {
 }
 
-static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz ,u8 bagg_pkt)
+static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz , u8 bagg_pkt)
 {
-	int	pull=0;
+	int	pull = 0;
 	uint	qsel;
-	u8 data_rate,pwr_status,offset;
+	u8 data_rate, pwr_status, offset;
 	_adapter			*padapter = pxmitframe->padapter;
 	struct mlme_priv	*pmlmepriv = &padapter->mlmepriv;
 	struct pkt_attrib	*pattrib = &pxmitframe->attrib;
@@ -52,8 +52,6 @@ static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz ,u8 bag
 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
 	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
 	sint	bmcst = IS_MCAST(pattrib->ra);
-	u16				SWDefineContent = 0x0;
-	u8				DriverFixedRate = 0x0;
 #if defined(CONFIG_80211N_HT)
 	struct sta_info *psta = NULL;
 	u8 max_agg_num = 0;
@@ -64,87 +62,80 @@ static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz ,u8 bag
 	struct dvobj_priv	*pdvobjpriv = adapter_to_dvobj(padapter);
 
 #ifndef CONFIG_USE_USB_BUFFER_ALLOC_TX
-	if (padapter->registrypriv.mp_mode == 0)
-	{
-		if((PACKET_OFFSET_SZ != 0) && (!bagg_pkt) &&(rtw_usb_bulk_size_boundary(padapter,TXDESC_SIZE+sz)==_FALSE))
-		{
-			ptxdesc = (pmem+PACKET_OFFSET_SZ);
-			//RTW_INFO("==> non-agg-pkt,shift pointer...\n");
+	if (padapter->registrypriv.mp_mode == 0) {
+		if ((PACKET_OFFSET_SZ != 0) && (!bagg_pkt) && (rtw_usb_bulk_size_boundary(padapter, TXDESC_SIZE + sz) == _FALSE)) {
+			ptxdesc = (pmem + PACKET_OFFSET_SZ);
+			/* RTW_INFO("==> non-agg-pkt,shift pointer...\n"); */
 			pull = 1;
 		}
 	}
-#endif	// CONFIG_USE_USB_BUFFER_ALLOC_TX
+#endif /* CONFIG_USE_USB_BUFFER_ALLOC_TX */
 
 	_rtw_memset(ptxdesc, 0, TXDESC_SIZE);
 
-        //4 offset 0
-	//SET_TX_DESC_FIRST_SEG_8812(ptxdesc, 1);
+	/* 4 offset 0 */
+	SET_TX_DESC_FIRST_SEG_8814A(ptxdesc, 1);
 	SET_TX_DESC_LAST_SEG_8814A(ptxdesc, 1);
-	//SET_TX_DESC_OWN_8812(ptxdesc, 1);
+	SET_TX_DESC_OWN_8814A(ptxdesc, 1);
 
-	//RTW_INFO("%s==> pkt_len=%d,bagg_pkt=%02x\n",__FUNCTION__,sz,bagg_pkt);
+	/* RTW_INFO("%s==> pkt_len=%d,bagg_pkt=%02x\n",__FUNCTION__,sz,bagg_pkt); */
 	SET_TX_DESC_PKT_SIZE_8814A(ptxdesc, sz);
 
 	offset = TXDESC_SIZE + OFFSET_SZ;
 
 #ifdef CONFIG_TX_EARLY_MODE
-	if(bagg_pkt){
-		offset += EARLY_MODE_INFO_SIZE ;//0x28
+	if (bagg_pkt) {
+		offset += EARLY_MODE_INFO_SIZE ;/* 0x28			 */
 	}
 #endif
-	//RTW_INFO("%s==>offset(0x%02x)  \n",__FUNCTION__,offset);
+	/* RTW_INFO("%s==>offset(0x%02x)\n",__FUNCTION__,offset); */
 	SET_TX_DESC_OFFSET_8814A(ptxdesc, offset);
 
-	if (bmcst) {
+	if (bmcst)
 		SET_TX_DESC_BMC_8814A(ptxdesc, 1);
-	}
 
 #ifndef CONFIG_USE_USB_BUFFER_ALLOC_TX
-	if (padapter->registrypriv.mp_mode == 0)
-	{
+	if (padapter->registrypriv.mp_mode == 0) {
 		if ((PACKET_OFFSET_SZ != 0) && (!bagg_pkt)) {
-			if ((pull) && (pxmitframe->pkt_offset>0)) {
-				pxmitframe->pkt_offset = pxmitframe->pkt_offset -1;
-			}
+			if ((pull) && (pxmitframe->pkt_offset > 0))
+				pxmitframe->pkt_offset = pxmitframe->pkt_offset - 1;
 		}
 	}
 #endif
 
-	//RTW_INFO("%s, pkt_offset=0x%02x\n",__FUNCTION__,pxmitframe->pkt_offset);
-	// pkt_offset, unit:8 bytes padding
-	if (pxmitframe->pkt_offset > 0) {
+	/* RTW_INFO("%s, pkt_offset=0x%02x\n",__FUNCTION__,pxmitframe->pkt_offset); */
+	/* pkt_offset, unit:8 bytes padding */
+	if (pxmitframe->pkt_offset > 0)
 		SET_TX_DESC_PKT_OFFSET_8814A(ptxdesc, pxmitframe->pkt_offset);
-	}
 
 	SET_TX_DESC_MACID_8814A(ptxdesc, pattrib->mac_id);
 	SET_TX_DESC_RATE_ID_8814A(ptxdesc, pattrib->raid);
 
 	SET_TX_DESC_QUEUE_SEL_8814A(ptxdesc,  pattrib->qsel);
 
-	//offset 12
+	/* offset 12 */
 
 	if (!pattrib->qos_en) {
-		/* HW sequence, to fix to use 0 queue. todo: 4AC packets to use auto queue select */
-		SET_TX_DESC_HWSEQ_EN_8814A(ptxdesc, 1); // Hw set sequence number
-		SET_TX_DESC_EN_HWEXSEQ_8814A(ptxdesc, 0);
-		SET_TX_DESC_DISQSELSEQ_8814A(ptxdesc, 1);
-		SET_TX_DESC_HW_SSN_SEL_8814A(ptxdesc, 0);
-	} else {
+		SET_TX_DESC_HWSEQ_EN_8814A(ptxdesc, 1); /* Hw set sequence number */
+	} else
 		SET_TX_DESC_SEQ_8814A(ptxdesc, pattrib->seqnum);
 
-	if ((pxmitframe->frame_tag&0x0f) == DATA_FRAMETAG) {
-		//RTW_INFO("pxmitframe->frame_tag == DATA_FRAMETAG\n");
+	if ((pxmitframe->frame_tag & 0x0f) == DATA_FRAMETAG) {
+		/* RTW_INFO("pxmitframe->frame_tag == DATA_FRAMETAG\n");		 */
 
 		rtl8814a_fill_txdesc_sectype(pattrib, ptxdesc);
+#if defined(CONFIG_CONCURRENT_MODE)
+		if (bmcst)
+			fill_txdesc_force_bmc_camid(pattrib, ptxdesc);
+#endif
 
-		//offset 20
-		}
+		/* offset 20 */
 #ifdef CONFIG_USB_TX_AGGREGATION
-		if (pxmitframe->agg_num > 1){
-			//RTW_INFO("%s agg_num:%d\n",__FUNCTION__,pxmitframe->agg_num );
+		if (pxmitframe->agg_num > 1) {
+			/* RTW_INFO("%s agg_num:%d\n",__FUNCTION__,pxmitframe->agg_num ); */
 			SET_TX_DESC_USB_TXAGG_NUM_8814A(ptxdesc, pxmitframe->agg_num);
 		}
-#endif //CONFIG_USB_TX_AGGREGATION
+#endif
 
 		rtl8814a_fill_txdesc_vcs(padapter, pattrib, ptxdesc);
 
@@ -155,178 +146,201 @@ static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz ,u8 bag
 #ifdef CONFIG_AUTO_AP_MODE
 		    && (pattrib->pctrl != _TRUE)
 #endif
-		)
-		{
-			//Non EAP & ARP & DHCP type data packet
+		   ) {
+			/* Non EAP & ARP & DHCP type data packet */
 #if defined(CONFIG_80211N_HT)
-			if (pattrib->ampdu_en==_TRUE) {
+			if (pattrib->ampdu_en == _TRUE) {
 				SET_TX_DESC_AGG_ENABLE_8814A(ptxdesc, 1);
-				SET_TX_DESC_MAX_AGG_NUM_8814A(ptxdesc, 0x1f);
-				// Set A-MPDU aggregation.
-				SET_TX_DESC_AMPDU_DENSITY_8814A(ptxdesc, pattrib->ampdu_spacing);
-			}
-			else
-#endif/*CONFIG_80211N_HT*/
-				SET_TX_DESC_BK_8814A(ptxdesc, 1);
+				if (padapter->driver_tx_max_agg_num != 0xFF) {
+					max_agg_num = padapter->driver_tx_max_agg_num; /* tx desc max_agg_num (unit:2)  */
+				} else {
+					psta = pattrib->psta;
 
+					ht_max_ampdu_size = psta->htpriv.ht_cap.ampdu_params_info & 0x3; /*get other side sta ht max rx ampdu size*/
+					/*RTW_INFO("%s, ht_max_ampdu_size=0x%02x\n", __func__, ht_max_ampdu_size);*/
+
+					vht_max_ampdu_size = psta->vhtpriv.ampdu_len;
+					/*RTW_INFO("%s, vht_max_ampdu_size=0x%02x\n", __func__, vht_max_ampdu_size);*/
+
+					if (vht_max_ampdu_size > ht_max_ampdu_size)
+						_max_ampdu_size = vht_max_ampdu_size;
+					else
+						_max_ampdu_size = ht_max_ampdu_size;
+
+					/* Calculate tx desc max_agg_num (unit:2)  */
+					if (_max_ampdu_size == MAX_AMPDU_FACTOR_1M)
+						max_agg_num = (1024 * 1024 / sz) / 2;
+					else if (_max_ampdu_size == MAX_AMPDU_FACTOR_512K)
+						max_agg_num = (512 * 1024 / sz) / 2;
+					else if (_max_ampdu_size == MAX_AMPDU_FACTOR_256K)
+						max_agg_num = (256 * 1024 / sz) / 2;
+					else if (_max_ampdu_size == MAX_AMPDU_FACTOR_128K)
+						max_agg_num = (128 * 1024 / sz) / 2;
+					else if (_max_ampdu_size == MAX_AMPDU_FACTOR_64K)
+						max_agg_num = (64 * 1024 / sz) / 2;
+					else if (_max_ampdu_size == MAX_AMPDU_FACTOR_32K)
+						max_agg_num = (32 * 1024 / sz)  / 2;
+					else if (_max_ampdu_size == MAX_AMPDU_FACTOR_16K)
+						max_agg_num = (16 * 1024 / sz)  / 2;
+					else if (_max_ampdu_size == MAX_AMPDU_FACTOR_8K)
+						max_agg_num = (8 * 1024 / sz) / 2;
+					/*RTW_INFO("%s, sz=%u , _max_ampdu_size=0x%02x\n", __func__, sz, _max_ampdu_size);*/
+					if (psta->max_agg_num_minimal_record == 0 || psta->max_agg_num_minimal_record > max_agg_num)
+						psta->max_agg_num_minimal_record = max_agg_num;
+					if (pdvobjpriv->traffic_stat.cur_tx_tp > 10 && pdvobjpriv->traffic_stat.cur_rx_tp > 10)
+						max_agg_num = psta->max_agg_num_minimal_record;
+				}
+				if (max_agg_num >= 0x1F)
+					max_agg_num = 0x1F;
+				/* RTW_INFO("%s, max_agg_num=0x%02x\n", __func__, max_agg_num); */
+				SET_TX_DESC_MAX_AGG_NUM_8814A(ptxdesc, max_agg_num);
+				/* Set A-MPDU aggregation. */
+				SET_TX_DESC_AMPDU_DENSITY_8814A(ptxdesc, pattrib->ampdu_spacing);
+			} else
+#endif/*CONFIG_80211N_HT*/
+				SET_TX_DESC_AGG_BREAK_8814A(ptxdesc, 1);
 
 			rtl8814a_fill_txdesc_phy(padapter, pattrib, ptxdesc);
 
-			//DATA  Rate FB LMT
-			//SET_TX_DESC_DATA_RATE_FB_LIMIT_8814A(ptxdesc, 0x1f);
-			if(pHalData->current_band_type == BAND_ON_5G)
-			{
-				SET_TX_DESC_DATA_RATE_FB_LIMIT_8814A(ptxdesc, 4);
-			}
-			else
-			{
-				SET_TX_DESC_DATA_RATE_FB_LIMIT_8814A(ptxdesc, 0);
-			}
+			/* DATA  Rate FB LMT */
+			SET_TX_DESC_DATA_RATE_FB_LIMIT_8814A(ptxdesc, 0x1f);
 
 			if (pHalData->fw_ractrl == _FALSE) {
 				SET_TX_DESC_USE_RATE_8814A(ptxdesc, 1);
-				DriverFixedRate = 0x01;
 
-				if(pHalData->INIDATA_RATE[pattrib->mac_id] & BIT(7))
-					SET_TX_DESC_DATA_SHORT_8814A(ptxdesc, 	1);
+				if (pHalData->INIDATA_RATE[pattrib->mac_id] & BIT(7))
+					SET_TX_DESC_DATA_SHORT_8814A(ptxdesc,	1);
 
 				SET_TX_DESC_TX_RATE_8814A(ptxdesc, (pHalData->INIDATA_RATE[pattrib->mac_id] & 0x7F));
 			}
+			if (bmcst)
+				fill_txdesc_bmc_tx_rate(pattrib, ptxdesc);
 
-			if (padapter->fix_rate != 0xFF) { // modify data rate by iwpriv
+			if (padapter->fix_rate != 0xFF) { /* modify data rate by iwpriv */
 				SET_TX_DESC_USE_RATE_8814A(ptxdesc, 1);
-				DriverFixedRate = 0x01;
-				if(padapter->fix_rate & BIT(7))
-					SET_TX_DESC_DATA_SHORT_8814A(ptxdesc, 	1);
+				if (padapter->fix_rate & BIT(7))
+					SET_TX_DESC_DATA_SHORT_8814A(ptxdesc,	1);
 
 				SET_TX_DESC_TX_RATE_8814A(ptxdesc, (padapter->fix_rate & 0x7F));
 				if (!padapter->data_fb)
-					SET_TX_DESC_DISABLE_FB_8814A(ptxdesc,1);
+					SET_TX_DESC_DISABLE_FB_8814A(ptxdesc, 1);
 			}
 
 			if (pattrib->ldpc)
 				SET_TX_DESC_DATA_LDPC_8814A(ptxdesc, 1);
 			if (pattrib->stbc)
 				SET_TX_DESC_DATA_STBC_8814A(ptxdesc, 1);
-
-			//work arond before fixing RA
-			//SET_TX_DESC_USE_RATE_8814A(ptxdesc, 1);
-			//SET_TX_DESC_TX_RATE_8814A(ptxdesc, 0x10);
-		}
-		else
-		{
-			// EAP data packet and ARP packet and DHCP.
-			// Use the 1M data rate to send the EAP/ARP packet.
-			// This will maybe make the handshake smooth.
+		} else {
+			/* EAP data packet and ARP packet and DHCP. */
+			/* Use the 1M data rate to send the EAP/ARP packet. */
+			/* This will maybe make the handshake smooth. */
 
 			SET_TX_DESC_USE_RATE_8814A(ptxdesc, 1);
-			DriverFixedRate = 0x01;
-			SET_TX_DESC_BK_8814A(ptxdesc, 1);
 
-			// HW will ignore this setting if the transmission rate is legacy OFDM.
+			SET_TX_DESC_AGG_BREAK_8814A(ptxdesc, 1);
+
+			/* HW will ignore this setting if the transmission rate is legacy OFDM. */
 			if (pmlmeinfo->preamble_mode == PREAMBLE_SHORT)
 				SET_TX_DESC_DATA_SHORT_8814A(ptxdesc, 1);
-
 #ifdef CONFIG_IP_R_MONITOR
 			if((pattrib->ether_type == ETH_P_ARP) &&
-			   (IsSupportedTxOFDM(padapter->registrypriv.wireless_mode))) {
-				SET_TX_DESC_TX_RATE_8812(ptxdesc, MRateToHwRate(IEEE80211_OFDM_RATE_6MB));
-#ifdef DBG_IP_R_MONITOR
+				(IsSupportedTxOFDM(padapter->registrypriv.wireless_mode))) {
+				SET_TX_DESC_TX_RATE_8814A(ptxdesc, MRateToHwRate(IEEE80211_OFDM_RATE_6MB));
+				#ifdef DBG_IP_R_MONITOR
 				RTW_INFO(FUNC_ADPT_FMT ": SP Packet(0x%04X) rate=0x%x SeqNum = %d\n",
-				         FUNC_ADPT_ARG(padapter), pattrib->ether_type, MRateToHwRate(pmlmeext->tx_rate), pattrib->seqnum);
-#endif/*DBG_IP_R_MONITOR*/
-			} else
+					FUNC_ADPT_ARG(padapter), pattrib->ether_type, MRateToHwRate(pmlmeext->tx_rate), pattrib->seqnum);
+				#endif/*DBG_IP_R_MONITOR*/
+			 } else
 #endif/*CONFIG_IP_R_MONITOR*/
-			SET_TX_DESC_TX_RATE_8814A(ptxdesc, MRateToHwRate(pmlmeext->tx_rate));
+				SET_TX_DESC_TX_RATE_8814A(ptxdesc, MRateToHwRate(pmlmeext->tx_rate));
 		}
 
-		if ((pxmitframe->frame_tag&0x0f)== MGNT_FRAMETAG) {
-		//RTW_INFO("pxmitframe->frame_tag == MGNT_FRAMETAG\n");
+#ifdef CONFIG_TDLS
+#ifdef CONFIG_XMIT_ACK
+		/* CCX-TXRPT ack for xmit mgmt frames. */
+		if (pxmitframe->ack_report) {
+			SET_TX_DESC_SPE_RPT_8814A(ptxdesc, 1);
+#ifdef DBG_CCX
+			RTW_INFO("%s set tx report\n", __func__);
+#endif
+		}
+#endif /* CONFIG_XMIT_ACK */
+#endif
+	} else if ((pxmitframe->frame_tag & 0x0f) == MGNT_FRAMETAG) {
+		/* RTW_INFO("pxmitframe->frame_tag == MGNT_FRAMETAG\n");	 */
+
+		if (IS_HARDWARE_TYPE_8821(padapter))
+			SET_TX_DESC_MBSSID_8821(ptxdesc, pattrib->mbssid);
 
 		SET_TX_DESC_USE_RATE_8814A(ptxdesc, 1);
-		DriverFixedRate = 0x01;
 
-#ifdef CONFIG_INTEL_PROXIM
-		if ((padapter->proximity.proxim_on==_TRUE)&&(pattrib->intel_proxim==_TRUE)){
-			RTW_INFO("\n %s pattrib->rate=%d\n", __func__,pattrib->rate);
-			SET_TX_DESC_TX_RATE_8814A(ptxdesc, pattrib->rate);
-		}
-		else
-#endif
-		{
-			SET_TX_DESC_TX_RATE_8814A(ptxdesc, MRateToHwRate(pattrib->rate));
-		}
+		SET_TX_DESC_TX_RATE_8814A(ptxdesc, MRateToHwRate(pattrib->rate));
 
-		// VHT NDPA or HT NDPA Packet for Beamformer.
+		/* VHT NDPA or HT NDPA Packet for Beamformer. */
+#ifdef CONFIG_BEAMFORMING
 		if ((pattrib->subtype == WIFI_NDPA) ||
-			((pattrib->subtype == WIFI_ACTION_NOACK) && (pattrib->order == 1)))
-		{
+		    ((pattrib->subtype == WIFI_ACTION_NOACK) && (pattrib->order == 1))) {
 			SET_TX_DESC_NAV_USE_HDR_8814A(ptxdesc, 1);
 
-			SET_TX_DESC_DATA_BW_8814A(ptxdesc, BWMapping_8814(padapter,pattrib));
-			SET_TX_DESC_RTS_SC_8814A(ptxdesc, SCMapping_8814(padapter,pattrib));
+			SET_TX_DESC_DATA_BW_8814A(ptxdesc, BWMapping_8814(padapter, pattrib));
+			SET_TX_DESC_RTS_SC_8814A(ptxdesc, SCMapping_8814(padapter, pattrib));
 
 			SET_TX_DESC_RETRY_LIMIT_ENABLE_8814A(ptxdesc, 1);
 			SET_TX_DESC_DATA_RETRY_LIMIT_8814A(ptxdesc, 5);
 			SET_TX_DESC_DISABLE_FB_8814A(ptxdesc, 1);
 
-			//if(pattrib->rts_cca)
-			//{
-			//	SET_TX_DESC_NDPA_8812(ptxdesc, 2);
-			//}
-			//else
+			/* if(pattrib->rts_cca) */
+			/* { */
+			/*	SET_TX_DESC_NDPA_8814A(ptxdesc, 2); */
+			/* }	 */
+			/* else */
 			{
 				SET_TX_DESC_NDPA_8814A(ptxdesc, 1);
 			}
-		}
-		else
+		} else
+#endif
 		{
 			SET_TX_DESC_RETRY_LIMIT_ENABLE_8814A(ptxdesc, 1);
-			if (pattrib->retry_ctrl == _TRUE) {
+			if (pattrib->retry_ctrl == _TRUE)
 				SET_TX_DESC_DATA_RETRY_LIMIT_8814A(ptxdesc, 6);
-			} else {
+			else
 				SET_TX_DESC_DATA_RETRY_LIMIT_8814A(ptxdesc, 12);
-			}
 		}
 
 #ifdef CONFIG_XMIT_ACK
-		//CCX-TXRPT ack for xmit mgmt frames.
+		/* CCX-TXRPT ack for xmit mgmt frames. */
 		if (pxmitframe->ack_report) {
 			SET_TX_DESC_SPE_RPT_8814A(ptxdesc, 1);
-			#ifdef DBG_CCX
+#ifdef DBG_CCX
 			RTW_INFO("%s set tx report\n", __func__);
-			#endif
-		}
-#endif //CONFIG_XMIT_ACK
-	}
-	else if((pxmitframe->frame_tag&0x0f) == TXAGG_FRAMETAG)
-	{
-		RTW_INFO("pxmitframe->frame_tag == TXAGG_FRAMETAG\n");
-	}
-#ifdef CONFIG_MP_INCLUDED
-	else if(((pxmitframe->frame_tag&0x0f) == MP_FRAMETAG) &&
-		(padapter->registrypriv.mp_mode == 1))
-	{
-		fill_txdesc_for_mp(padapter, ptxdesc);
-	}
 #endif
-	else
-	{
+		}
+#endif /* CONFIG_XMIT_ACK */
+	} else if ((pxmitframe->frame_tag & 0x0f) == TXAGG_FRAMETAG)
+		RTW_INFO("pxmitframe->frame_tag == TXAGG_FRAMETAG\n");
+#ifdef CONFIG_MP_INCLUDED
+	else if (((pxmitframe->frame_tag & 0x0f) == MP_FRAMETAG) &&
+		 (padapter->registrypriv.mp_mode == 1))
+		fill_txdesc_for_mp(padapter, ptxdesc);
+#endif
+	else {
 		RTW_INFO("pxmitframe->frame_tag = %d\n", pxmitframe->frame_tag);
 
 		SET_TX_DESC_USE_RATE_8814A(ptxdesc, 1);
-		DriverFixedRate = 0x01;
 		SET_TX_DESC_TX_RATE_8814A(ptxdesc, MRateToHwRate(pmlmeext->tx_rate));
 	}
-	if (DriverFixedRate)
-		SWDefineContent |= 0x01;
-	SET_TX_DESC_SW_DEFINE_8814A(ptxdesc,  SWDefineContent);
 
+#ifdef CONFIG_ANTENNA_DIVERSITY
+	if (!bmcst && pattrib->psta)
+		odm_set_tx_ant_by_tx_info(adapter_to_phydm(padapter), ptxdesc, pattrib->psta->cmn.mac_id);
+#endif
+
+#ifdef CONFIG_BEAMFORMING
 	SET_TX_DESC_GID_8814A(ptxdesc, pattrib->txbf_g_id);
 	SET_TX_DESC_PAID_8814A(ptxdesc, pattrib->txbf_p_aid);
-
+#endif
 	rtl8814a_cal_txdesc_chksum(ptxdesc);
-	_dbg_dump_tx_info(padapter,pxmitframe->frame_tag,ptxdesc);
+	_dbg_dump_tx_info(padapter, pxmitframe->frame_tag, ptxdesc);
 	return pull;
 }
 
@@ -472,7 +486,7 @@ static s32 rtw_dump_xframe(_adapter *padapter, struct xmit_frame *pxmitframe)
 #else
 		inner_ret = rtw_write_port(padapter, ff_hwaddr, w_sz, (unsigned char *)pxmitbuf);
 #endif
-		}
+
 		rtw_count_tx_stats(padapter, pxmitframe, sz);
 
 		/* RTW_INFO("rtw_write_port, w_sz=%d, sz=%d, txdesc_sz=%d, tid=%d\n", w_sz, sz, w_sz-sz, pattrib->priority);       */
