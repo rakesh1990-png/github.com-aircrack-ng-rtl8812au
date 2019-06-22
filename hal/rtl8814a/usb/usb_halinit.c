@@ -595,7 +595,7 @@ _InitMacConfigure_8814A(
 	rtw_write32(Adapter, REG_RRSR, regRRSR);
 
 	// Retry Limit
-	value16 = _LRL(0x30) | _SRL(0x30);
+	value16 = BIT_LRL(0x30) | BIT_SRL(0x30);
 	rtw_write16(Adapter, REG_RETRY_LIMIT_8814A, value16);
 	
 	pHalData->ReceiveConfig = RCR_APM | RCR_AM | RCR_AB |RCR_CBSSID_DATA| RCR_CBSSID_BCN| RCR_APP_ICV | RCR_AMF | RCR_HTC_LOC_CTRL | RCR_APP_MIC | RCR_APP_PHYST_RXFF;
