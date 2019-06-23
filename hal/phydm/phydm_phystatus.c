@@ -890,7 +890,7 @@ s8 phydm_get_cck_rssi(void *dm_void, u8 lna_idx, u8 vga_idx)
 
 	#if (RTL8814A_SUPPORT == 1)
 	case ODM_RTL8814A:
-		rx_pow = phydm_cck_rssi_8814a(dm, lna_idx, vga_idx);
+		rx_pow = phydm_cck_rssi_convert(dm, lna_idx, vga_idx);
 		break;
 	#endif
 
