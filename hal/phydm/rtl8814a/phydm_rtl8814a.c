@@ -1,7 +1,7 @@
 /******************************************************************************
  *
  * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
- *                                        
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
@@ -33,13 +33,13 @@ odm_Write_Dynamic_CCA_8814A(
 	u8			CurrentMFstate
 	)
 {
-	struct phydm_pri_cca_struct*		PrimaryCCA = &(dm->dm_pri_cca);  
-	
+	struct phydm_pri_cca_struct*		PrimaryCCA = &(dm->dm_pri_cca);
+
 	if (PrimaryCCA->MF_state != CurrentMFstate){
 
-		ODM_SetBBReg(dm, ODM_REG_L1SBD_PD_CH_11N, BIT(8)|BIT(7), CurrentMFstate);  
-	}		
-	
+		ODM_SetBBReg(dm, ODM_REG_L1SBD_PD_CH_11N, BIT(8)|BIT(7), CurrentMFstate);
+	}
+
 	PrimaryCCA->MF_state = CurrentMFstate;
 
 }
@@ -50,7 +50,7 @@ odm_PrimaryCCA_Check_Init_8814A(
 {
 #if ((DM_ODM_SUPPORT_TYPE == ODM_WIN) || (DM_ODM_SUPPORT_TYPE == ODM_AP))
 	void *		padapter = dm->adapter;
-	struct phydm_pri_cca_struct*		PrimaryCCA = &(dm->dm_pri_cca);  
+	struct phydm_pri_cca_struct*		PrimaryCCA = &(dm->dm_pri_cca);
 	HAL_DATA_TYPE	*hal_data = GET_HAL_DATA(padapter);
 
 	hal_data->RTSEN = 0;
@@ -69,7 +69,7 @@ odm_DynamicPrimaryCCA_Check_8814A(
 	struct dm_struct    *dm
 	)
 {
-	if(dm->SupportICType != ODM_RTL8814A) 
+	if(dm->SupportICType != ODM_RTL8814A)
 		return;
 
 	switch	(dm->SupportPlatform)
@@ -83,7 +83,7 @@ odm_DynamicPrimaryCCA_Check_8814A(
 
 		case	ODM_CE:
 #if(DM_ODM_SUPPORT_TYPE==ODM_CE)
-		
+
 #endif
 			break;
 
@@ -91,7 +91,7 @@ odm_DynamicPrimaryCCA_Check_8814A(
 #if (DM_ODM_SUPPORT_TYPE == ODM_AP)
 			odm_DynamicPrimaryCCAAP_8814A(dm);
 #endif
-			break;	
+			break;
 		}
 
 }
@@ -107,13 +107,13 @@ odm_DynamicPrimaryCCAMP_8814A(
 	void *		padapter = dm->adapter;
 	HAL_DATA_TYPE	*hal_data = GET_HAL_DATA(padapter);
 	Pfalse_ALARM_STATISTICS		FalseAlmCnt = (Pfalse_ALARM_STATISTICS)PhyDM_Get_Structure( dm, PHYDM_FALSEALMCNT);
-	struct phydm_pri_cca_struct*		PrimaryCCA = &(dm->dm_pri_cca);  
+	struct phydm_pri_cca_struct*		PrimaryCCA = &(dm->dm_pri_cca);
 	boolean			Is40MHz = false;
 	u8Byte			OFDM_CCA, OFDM_FA, BW_USC_Cnt, BW_LSC_Cnt;
 	u8			SecCHOffset;
 	u8			CurMFstate;
 	static u8		CountDown = Monitor_TIME;
-	
+
 	OFDM_CCA = FalseAlmCnt->Cnt_OFDM_CCA;
 	OFDM_FA = FalseAlmCnt->Cnt_Ofdm_fail;
 	BW_USC_Cnt = FalseAlmCnt->Cnt_BW_USC;
@@ -121,7 +121,7 @@ odm_DynamicPrimaryCCAMP_8814A(
 	PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,  ("8814A: OFDM CCA=%d\n", OFDM_CCA));
 	PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,  ("8814A: OFDM FA=%d\n", OFDM_FA));
 	PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,  ("8814A: BW_USC=%d\n", BW_USC_Cnt));
-	PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,  ("8814A: BW_LSC=%d\n", BW_LSC_Cnt)); 
+	PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,  ("8814A: BW_LSC=%d\n", BW_LSC_Cnt));
        Is40MHz = *(dm->pBandWidth);
 	SecCHOffset = *(dm->pSecChOffset);		// NIC: 2: sec is below,  1: sec is above
 	//DbgPrint("8814A: SecCHOffset = %d\n", SecCHOffset);
@@ -129,7 +129,7 @@ odm_DynamicPrimaryCCAMP_8814A(
 		return;
 	}
 	else{
-		
+
 		if(Is40MHz){
 			PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,  ("8814A: Cont Down= %d\n", CountDown));
 			PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,  ("8814A: Primary_CCA_flag=%d\n", PrimaryCCA->PriCCA_flag));
@@ -142,7 +142,7 @@ odm_DynamicPrimaryCCAMP_8814A(
 
 				if(SecCHOffset == 2){    // Primary channel is above   NOTE: duplicate CTS can remove this condition
 
-					if((OFDM_CCA > OFDMCCA_TH) && (BW_LSC_Cnt>(BW_USC_Cnt + BW_Ind_Bias)) 
+					if((OFDM_CCA > OFDMCCA_TH) && (BW_LSC_Cnt>(BW_USC_Cnt + BW_Ind_Bias))
 						&& (OFDM_FA>(OFDM_CCA>>1))){
 
 						PrimaryCCA->intf_type = 1;
@@ -159,11 +159,11 @@ odm_DynamicPrimaryCCAMP_8814A(
 						CurMFstate = MF_USC;
 						odm_Write_Dynamic_CCA_8814A(dm, CurMFstate);
 						PrimaryCCA->PriCCA_flag = 1;
-						PrimaryCCA->DupRTS_flag = 1;   
+						PrimaryCCA->DupRTS_flag = 1;
 						hal_data->RTSEN = 1;
 					}
 					else{
-						
+
 						PrimaryCCA->intf_type = 0;
 						PrimaryCCA->intf_flag = 0;
 						CurMFstate = MF_USC_LSC;
@@ -171,26 +171,26 @@ odm_DynamicPrimaryCCAMP_8814A(
 						hal_data->RTSEN = 0;
 						PrimaryCCA->DupRTS_flag = 0;
 					}
-			
+
 				}
 				else if (SecCHOffset == 1){
 
-					if((OFDM_CCA > OFDMCCA_TH) && (BW_USC_Cnt > (BW_LSC_Cnt + BW_Ind_Bias)) 
+					if((OFDM_CCA > OFDMCCA_TH) && (BW_USC_Cnt > (BW_LSC_Cnt + BW_Ind_Bias))
 						&& (OFDM_FA > (OFDM_CCA>>1))){
-				
+
 						PrimaryCCA->intf_type = 1;
 						PrimaryCCA->intf_flag = 1;
 						CurMFstate = MF_LSC;
 						odm_Write_Dynamic_CCA_8814A(dm, CurMFstate);
 						PrimaryCCA->PriCCA_flag = 1;
-					}			
+					}
 					else if((OFDM_CCA > OFDMCCA_TH) && (BW_USC_Cnt>(BW_LSC_Cnt + BW_Ind_Bias))
 						&& (OFDM_FA < (OFDM_CCA>>1))){
 
  						PrimaryCCA->intf_type = 2;
 						PrimaryCCA->intf_flag = 1;
 						CurMFstate = MF_LSC;
-						odm_Write_Dynamic_CCA_8814A(dm, CurMFstate); 
+						odm_Write_Dynamic_CCA_8814A(dm, CurMFstate);
 						PrimaryCCA->PriCCA_flag = 1;
 						PrimaryCCA->DupRTS_flag = 1;
 						hal_data->RTSEN = 1;
@@ -205,11 +205,11 @@ odm_DynamicPrimaryCCAMP_8814A(
 						PrimaryCCA->DupRTS_flag = 0;
 					}
 
-				}			
-				
+				}
+
 			}
 			else{	// PrimaryCCA->PriCCA_flag==1
-			
+
 				CountDown--;
 				if(CountDown == 0){
 					CountDown = Monitor_TIME;
@@ -220,18 +220,18 @@ odm_DynamicPrimaryCCAMP_8814A(
 					PrimaryCCA->DupRTS_flag = 0;
 					PrimaryCCA->intf_type = 0;
 					PrimaryCCA->intf_flag = 0;
-				}				
-				
+				}
+
 			}
-			
+
 		}
 		else{
-			
+
 			return;
 		}
 	}
-	
-}	
+
+}
 
 #elif(DM_ODM_SUPPORT_TYPE == ODM_AP)
 
@@ -243,17 +243,17 @@ odm_DynamicPrimaryCCAAP_8814A(
 	void *	adapter = dm->adapter;
 	prtl8192cd_priv	priv = dm->priv;
 	Pfalse_ALARM_STATISTICS		FalseAlmCnt = (Pfalse_ALARM_STATISTICS)PhyDM_Get_Structure( dm, PHYDM_FALSEALMCNT);
-	struct phydm_pri_cca_struct*		PrimaryCCA = &(dm->dm_pri_cca);  
+	struct phydm_pri_cca_struct*		PrimaryCCA = &(dm->dm_pri_cca);
 
 	HAL_DATA_TYPE	*hal_data = GET_HAL_DATA(adapter);
-	u8 		i;	
+	u8 		i;
 	static u4Byte	Count_Down = Monitor_TIME;
 	boolean		STA_BW = false, STA_BW_pre = false, STA_BW_TMP = false;
 	boolean		bConnected = false;
 	boolean		Is40MHz = false;
 	u8		SecCHOffset;
 	u8		CurMFstate;
-	PSTA_INFO_T		pstat;	
+	PSTA_INFO_T		pstat;
 
 	Is40MHz = *(dm->pBandWidth);
 	SecCHOffset = *(dm->pSecChOffset);		// AP: 1: sec is below,  2: sec is above
@@ -272,7 +272,7 @@ odm_DynamicPrimaryCCAAP_8814A(
 	}
 
 	if(Is40MHz){
-		
+
 		if(PrimaryCCA->PriCCA_flag == 0){
 
 			if(bConnected){
@@ -282,11 +282,11 @@ odm_DynamicPrimaryCCAAP_8814A(
 					PrimaryCCA->PriCCA_flag = 1;
 					if(SecCHOffset==1){
 						CurMFstate = MF_USC;
-						odm_Write_Dynamic_CCA_8814A(dm, CurMFstate); 
+						odm_Write_Dynamic_CCA_8814A(dm, CurMFstate);
 					}
 					else if(SecCHOffset==2){
 						CurMFstate = MF_USC;
-						odm_Write_Dynamic_CCA_8814A(dm, CurMFstate); 
+						odm_Write_Dynamic_CCA_8814A(dm, CurMFstate);
 					}
 				}
 				else{     		 	//2  STA BW=40M
@@ -294,45 +294,45 @@ odm_DynamicPrimaryCCAAP_8814A(
 
 						odm_Intf_Detection(dm);
 					}
-					else{	// intf_flag = 1 
-					
-						if(PrimaryCCA->intf_type == 1){		
-							
+					else{	// intf_flag = 1
+
+						if(PrimaryCCA->intf_type == 1){
+
 							if(PrimaryCCA->CH_offset == 1){
-								
+
 								CurMFstate = MF_USC;
 								if(SecCHOffset == 1){  // AP,  1: primary is above  2: primary is below
-									odm_Write_Dynamic_CCA_8814A(dm, CurMFstate); 
+									odm_Write_Dynamic_CCA_8814A(dm, CurMFstate);
 								}
 							}
 							else if(PrimaryCCA->CH_offset == 2){
 
 								CurMFstate = MF_LSC;
 								if(SecCHOffset == 2){
-									odm_Write_Dynamic_CCA_8814A(dm, CurMFstate); 
+									odm_Write_Dynamic_CCA_8814A(dm, CurMFstate);
 								}
 							}
-						}	
+						}
 						else if(PrimaryCCA->intf_type==2){
 
 							if(PrimaryCCA->CH_offset==1){
 
-								//ODM_SetBBReg(dm, ODM_REG_L1SBD_PD_CH_11N, BIT(8)|BIT(7), MF_USC); 
+								//ODM_SetBBReg(dm, ODM_REG_L1SBD_PD_CH_11N, BIT(8)|BIT(7), MF_USC);
 								hal_data->RTSEN = 1;
 							}
 							else if(PrimaryCCA->CH_offset==2){
-								
-								//ODM_SetBBReg(dm, ODM_REG_L1SBD_PD_CH_11N, BIT(8)|BIT(7), MF_LSC); 
+
+								//ODM_SetBBReg(dm, ODM_REG_L1SBD_PD_CH_11N, BIT(8)|BIT(7), MF_LSC);
 								hal_data->RTSEN = 1;
 							}
-						
+
 						}
 					}
 				}
 
 			}
 			else{		// disconnected  interference detection
-			
+
 				odm_Intf_Detection(dm);
 			}// end of disconnected
 
@@ -341,7 +341,7 @@ odm_DynamicPrimaryCCAAP_8814A(
 		else{	// PrimaryCCA->PriCCA_flag == 1
 
 			if(STA_BW==0){
-				
+
 				STA_BW_pre = STA_BW;
 				return;
 			}
@@ -356,7 +356,7 @@ odm_DynamicPrimaryCCAAP_8814A(
 				CurMFstate = MF_USC_LSC;
 				odm_Write_Dynamic_CCA_8814A(dm, CurMFstate); /* default*/
 				hal_data->RTSEN = 0;
-			
+
 			}
 
 		}
@@ -368,7 +368,7 @@ odm_DynamicPrimaryCCAAP_8814A(
 		//2 Reset
 		odm_PrimaryCCA_Check_Init(dm);
 		CurMFstate = MF_USC_LSC;
-		odm_Write_Dynamic_CCA_8814A(dm, CurMFstate); 
+		odm_Write_Dynamic_CCA_8814A(dm, CurMFstate);
 		Count_Down = Monitor_TIME;
 	}
 
@@ -381,7 +381,7 @@ odm_Intf_Detection_8814A(
 	)
 {
 	Pfalse_ALARM_STATISTICS		FalseAlmCnt = (Pfalse_ALARM_STATISTICS)PhyDM_Get_Structure( dm, PHYDM_FALSEALMCNT);
-	struct phydm_pri_cca_struct*					PrimaryCCA = &(dm->dm_pri_cca);  
+	struct phydm_pri_cca_struct*					PrimaryCCA = &(dm->dm_pri_cca);
 
 	if((FalseAlmCnt->Cnt_OFDM_CCA>OFDMCCA_TH)
 		&&(FalseAlmCnt->Cnt_BW_LSC>(FalseAlmCnt->Cnt_BW_USC+BW_Ind_Bias))){
@@ -454,12 +454,57 @@ void odm_hw_setting_8814a(
 }
 
 
+#ifdef DYN_ANT_WEIGHTING_SUPPORT
+void phydm_dynamic_ant_weighting_8814a(void *dm_void)
+{
+	struct dm_struct *dm = (struct dm_struct *)dm_void;
+	u8 rssi_l2h = 43, rssi_h2l = 37;
+	u8 reg_8;
+
+    PHYDM_DBG(dm, ODM_COMP_API, "PEC DBD: non-existing function start.%s\n",__PRETTY_FUNCTION__);
+
+	if (dm->is_disable_dym_ant_weighting)
+		return;
+
+	if (*dm->channel <= 14) {
+		if (dm->rssi_min >= rssi_l2h) {
+			odm_set_bb_reg(dm, R_0x854, BIT(3), 0x1);
+			odm_set_bb_reg(dm, R_0x850, BIT(21) | BIT(22), 0x0);
+
+			/*equal weighting*/
+			reg_8 = (u8)odm_get_bb_reg(dm, R_0xf94, BIT(0) | BIT(1) | BIT(2));
+			PHYDM_DBG(dm, ODM_COMP_API,
+				  "Equal weighting ,rssi_min = %d\n, 0xf94[2:0] = 0x%x\n",
+				  dm->rssi_min, reg_8);
+		} else if (dm->rssi_min <= rssi_h2l) {
+			odm_set_bb_reg(dm, R_0x854, BIT(3), 0x1);
+			odm_set_bb_reg(dm, R_0x850, BIT(21) | BIT(22), 0x1);
+
+			/*fix sec_min_wgt = 1/2*/
+			reg_8 = (u8)odm_get_bb_reg(dm, R_0xf94, BIT(0) | BIT(1) | BIT(2));
+			PHYDM_DBG(dm, ODM_COMP_API,
+				  "AGC weighting ,rssi_min = %d\n, 0xf94[2:0] = 0x%x\n",
+				  dm->rssi_min, reg_8);
+		}
+	} else {
+		odm_set_bb_reg(dm, R_0x854, BIT(3), 0x1);
+		odm_set_bb_reg(dm, R_0x850, BIT(21) | BIT(22), 0x1);
+
+		reg_8 = (u8)odm_get_bb_reg(dm, R_0xf94, BIT(0) | BIT(1) | BIT(2));
+		PHYDM_DBG(dm, ODM_COMP_API,
+			  "AGC weighting ,rssi_min = %d\n, 0xf94[2:0] = 0x%x\n",
+			  dm->rssi_min, reg_8);
+		/*fix sec_min_wgt = 1/2*/
+	}
+    PHYDM_DBG(dm, ODM_COMP_API, "PEC DBD: non-existing function end.%s\n",__PRETTY_FUNCTION__);
+}
+#endif
+
+void phydm_hwsetting_8814a(struct dm_struct *dm)
+{
+    PHYDM_DBG(dm, ODM_COMP_API, "PEC DBD: non-existing function start.%s\n",__PRETTY_FUNCTION__);
+	phydm_dynamic_ant_weighting(dm);
+    PHYDM_DBG(dm, ODM_COMP_API, "PEC DBD: non-existing function end.%s\n",__PRETTY_FUNCTION__);
+}
+
 #endif		// RTL8814A_SUPPORT == 1
-
-
-
-
-
-
-
-
