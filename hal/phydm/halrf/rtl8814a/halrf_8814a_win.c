@@ -104,7 +104,7 @@ ODM_TxPwrTrackSetPwr8814A(
 		
 		if (Method == MIX_MODE)
 		{
-			PHYDM_DBG(dm,ODM_COMP_TX_PWR_TRACK, ("pRFCalibrateInfo->DefaultOfdmIndex=%d, pRFCalibrateInfo->Absolute_OFDMSwingIdx[RFPath]=%d, RF_Path = %d\n",
+			PHYDM_DBG(dm,DBG_COMP_MCC, ("pRFCalibrateInfo->DefaultOfdmIndex=%d, pRFCalibrateInfo->Absolute_OFDMSwingIdx[RFPath]=%d, RF_Path = %d\n",
 				pRFCalibrateInfo->DefaultOfdmIndex, pRFCalibrateInfo->Absolute_OFDMSwingIdx[RFPath], RFPath));
 			
 			Final_CCK_Swing_Index = pRFCalibrateInfo->DefaultCckIndex + pRFCalibrateInfo->Absolute_OFDMSwingIdx[RFPath];	
@@ -125,7 +125,7 @@ ODM_TxPwrTrackSetPwr8814A(
 						
 						ODM_SetBBReg(dm, rA_TxScale_Jaguar, 0xFFE00000, TxScalingTable_Jaguar[Final_OFDM_Swing_Index]);	//set BBswing
 
-						PHYDM_DBG(dm,ODM_COMP_TX_PWR_TRACK, 
+						PHYDM_DBG(dm,DBG_COMP_MCC, 
 							("******Path_A Compensate with BBSwing , Final_OFDM_Swing_Index = %d, Final_RF_Index = %d \n", Final_OFDM_Swing_Index, Final_RF_Index));
 						break;
 
@@ -133,7 +133,7 @@ ODM_TxPwrTrackSetPwr8814A(
 						
 						ODM_SetBBReg(dm, rB_TxScale_Jaguar, 0xFFE00000, TxScalingTable_Jaguar[Final_OFDM_Swing_Index]);	//set BBswing
 
-						PHYDM_DBG(dm,ODM_COMP_TX_PWR_TRACK, 
+						PHYDM_DBG(dm,DBG_COMP_MCC, 
 							("******Path_B Compensate with BBSwing , Final_OFDM_Swing_Index = %d, Final_RF_Index = %d \n", Final_OFDM_Swing_Index, Final_RF_Index));
 						break;
 
@@ -141,7 +141,7 @@ ODM_TxPwrTrackSetPwr8814A(
 						
 						ODM_SetBBReg(dm, rC_TxScale_Jaguar2, 0xFFE00000, TxScalingTable_Jaguar[Final_OFDM_Swing_Index]);	//set BBswing
 
-						PHYDM_DBG(dm,ODM_COMP_TX_PWR_TRACK, 
+						PHYDM_DBG(dm,DBG_COMP_MCC, 
 							("******Path_C Compensate with BBSwing , Final_OFDM_Swing_Index = %d, Final_RF_Index = %d \n", Final_OFDM_Swing_Index, Final_RF_Index));
 				            	break;
 
@@ -149,12 +149,12 @@ ODM_TxPwrTrackSetPwr8814A(
 						
 						ODM_SetBBReg(dm, rD_TxScale_Jaguar2, 0xFFE00000, TxScalingTable_Jaguar[Final_OFDM_Swing_Index]);	//set BBswing
 
-						PHYDM_DBG(dm,ODM_COMP_TX_PWR_TRACK, 
+						PHYDM_DBG(dm,DBG_COMP_MCC, 
 							("******Path_D Compensate with BBSwing , Final_OFDM_Swing_Index = %d, Final_RF_Index = %d \n", Final_OFDM_Swing_Index, Final_RF_Index));
 						break;
 
 					default:
-						PHYDM_DBG(dm,ODM_COMP_TX_PWR_TRACK, 
+						PHYDM_DBG(dm,DBG_COMP_MCC, 
 							("Wrong Path name!!!! \n"));
 
 					break;
@@ -213,7 +213,7 @@ GetDeltaSwingTable_8814A(
 		}
 	}
 		
-	PHYDM_DBG(dm, ODM_COMP_TX_PWR_TRACK,  ("Power Tracking TxRate=0x%X\n", TxRate));
+	PHYDM_DBG(dm, DBG_COMP_MCC,  ("Power Tracking TxRate=0x%X\n", TxRate));
 
 	if (1 <= channel && channel <= 14) {
 		if (IS_CCK_RATE(TxRate)) {
@@ -299,7 +299,7 @@ GetDeltaSwingTable_8814A_PathCD(
 		}
 	}
 		
-	PHYDM_DBG(dm, ODM_COMP_TX_PWR_TRACK,  ("Power Tracking TxRate=0x%X\n", TxRate));
+	PHYDM_DBG(dm, DBG_COMP_MCC,  ("Power Tracking TxRate=0x%X\n", TxRate));
 
 
 	if ( 1 <= channel && channel <= 14) {
@@ -388,7 +388,7 @@ phy_LCCalibrate_8814A(
 			break;	
 		ODM_delay_ms(10);
 	}
-	PHYDM_DBG(dm, ODM_COMP_CALIBRATION,  ("retry cnt = %d\n", cnt));
+	PHYDM_DBG(dm, DBG_CMN,  ("retry cnt = %d\n", cnt));
 
 
 
@@ -435,13 +435,13 @@ PHY_LCCalibrate_8814A(
 #endif
 #endif	
 
-	PHYDM_DBG(dm, ODM_COMP_CALIBRATION,  ("===> PHY_LCCalibrate_8814A\n"));
+	PHYDM_DBG(dm, DBG_CMN,  ("===> PHY_LCCalibrate_8814A\n"));
 
 //#if (MP_DRIVER == 1)	
 	phy_LCCalibrate_8814A(dm, true);
 //#endif 
 
-	PHYDM_DBG(dm, ODM_COMP_CALIBRATION,  ("<=== PHY_LCCalibrate_8814A\n"));
+	PHYDM_DBG(dm, DBG_CMN,  ("<=== PHY_LCCalibrate_8814A\n"));
 
 }
 

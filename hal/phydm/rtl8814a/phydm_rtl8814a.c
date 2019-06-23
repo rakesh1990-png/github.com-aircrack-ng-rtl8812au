@@ -435,7 +435,7 @@ phydm_spur_nbi_setting_8814a(
 		else
 			set_result = phydm_nbi_setting(dm,	FUNC_ENABLE, *dm->channel, 40, 2440, PHYDM_DONT_CARE);
 	}
-	PHYDM_DBG(dm, ODM_COMP_COMMON,  ("%s, set_result = 0x%d, pChannel = %d\n", __func__, set_result, *dm->channel));
+	PHYDM_DBG(dm, DBG_CMN,  ("%s, set_result = 0x%d, pChannel = %d\n", __func__, set_result, *dm->channel));
 	//printk("%s, set_result = 0x%d, pChannel = %d\n", __func__, set_result, *dm->channel);
 	dm->nbi_set_result = set_result;
 	return set_result;

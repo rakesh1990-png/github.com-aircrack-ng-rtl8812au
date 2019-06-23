@@ -1546,7 +1546,7 @@ odm_read_and_config_mp_8814a_agc_tab(
 			}
 		} else {
 			if (is_matched)
-				odm_ConfigBB_AGC_8814A(dm, v1, MASKDWORD, v2);
+				odm_config_bb_agc_8814a(dm, v1, MASKDWORD, v2);
 		}
 		i = i + 2;
 	}

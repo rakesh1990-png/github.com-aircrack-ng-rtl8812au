@@ -24,7 +24,7 @@
 #if (RTL8814A_SUPPORT == 1)  
 
 void
-odm_ConfigRFReg_8814A(
+odm_config_rf_reg_8814a(
 	struct dm_struct    *dm,
 	u32 					Addr,
 	u32 					Data,
@@ -59,7 +59,7 @@ odm_config_rf_radio_a_8814a(
 	u4Byte  content = 0x1000; // RF_Content: radioa_txt
 	u4Byte	maskforPhySet= (u4Byte)(content&0xE000);
 
-    odm_ConfigRFReg_8814A(dm, Addr, Data, RF_PATH_A, Addr|maskforPhySet);
+    odm_config_rf_reg_8814a(dm, Addr, Data, RF_PATH_A, Addr|maskforPhySet);
 
     PHYDM_DBG(dm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigRFWithHeaderFile: [RadioA] %08X %08X\n", Addr, Data));
 }
@@ -74,7 +74,7 @@ odm_config_rf_radio_b_8814a(
 	u4Byte  content = 0x1001; // RF_Content: radiob_txt
 	u4Byte	maskforPhySet= (u4Byte)(content&0xE000);
 
-    odm_ConfigRFReg_8814A(dm, Addr, Data, RF_PATH_B, Addr|maskforPhySet);
+    odm_config_rf_reg_8814a(dm, Addr, Data, RF_PATH_B, Addr|maskforPhySet);
 	
 	PHYDM_DBG(dm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigRFWithHeaderFile: [RadioB] %08X %08X\n", Addr, Data));
     
@@ -90,7 +90,7 @@ odm_config_rf_radio_c_8814a(
 	u4Byte  content = 0x1001; // RF_Content: radiob_txt
 	u4Byte	maskforPhySet= (u4Byte)(content&0xE000);
 
-    odm_ConfigRFReg_8814A(dm, Addr, Data, RF_PATH_C, Addr|maskforPhySet);
+    odm_config_rf_reg_8814a(dm, Addr, Data, RF_PATH_C, Addr|maskforPhySet);
 	
 	PHYDM_DBG(dm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigRFWithHeaderFile: [RadioC] %08X %08X\n", Addr, Data));
     
@@ -106,7 +106,7 @@ odm_config_rf_radio_d_8814a(
 	u4Byte  content = 0x1001; // RF_Content: radiob_txt
 	u4Byte	maskforPhySet= (u4Byte)(content&0xE000);
 
-    odm_ConfigRFReg_8814A(dm, Addr, Data, RF_PATH_D, Addr|maskforPhySet);
+    odm_config_rf_reg_8814a(dm, Addr, Data, RF_PATH_D, Addr|maskforPhySet);
 	
 	PHYDM_DBG(dm,ODM_COMP_INIT, ODM_DBG_TRACE, ("===> ODM_ConfigRFWithHeaderFile: [RadioD] %08X %08X\n", Addr, Data));
     
@@ -124,7 +124,7 @@ odm_config_mac_8814a(
 }
 
 void 
-odm_ConfigBB_AGC_8814A(
+odm_config_bb_agc_8814a(
     struct dm_struct    *dm,
     u32 		Addr,
     u32 		Bitmask,
