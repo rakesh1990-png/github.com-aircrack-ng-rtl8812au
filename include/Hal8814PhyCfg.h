@@ -206,8 +206,8 @@ PHY_HandleSwChnlAndSetBW8814A(
 );
 
 
-BOOLEAN
-PHY_QueryRFPathSwitch_8814A(IN	PADAPTER	pAdapter);
+/* BOOLEAN */
+/* PHY_QueryRFPathSwitch_8814A(IN	PADAPTER	pAdapter); */
 
 
 

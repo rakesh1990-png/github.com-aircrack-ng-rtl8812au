@@ -522,18 +522,18 @@ phy_QueryRFPathSwitch_8814A(
 }
 
 
-boolean PHY_QueryRFPathSwitch_8814A(
-	IN	void *	padapter
-	)
-{
-	HAL_DATA_TYPE	*hal_data = GET_HAL_DATA(padapter);
+/* BOOLEAN PHY_QueryRFPathSwitch_8814A( */
+/* 	IN	void *	padapter */
+/* 	) */
+/* { */
+/* 	HAL_DATA_TYPE	*hal_data = GET_HAL_DATA(padapter); */
 
-#if DISABLE_BB_RF
-	return true;
-#endif
+/* #if DISABLE_BB_RF */
+/* 	return true; */
+/* #endif */
 
-	return phy_QueryRFPathSwitch_8814A(padapter);
-}
+/* 	return phy_QueryRFPathSwitch_8814A(padapter); */
+/* } */
 
 
 VOID _phy_SetRFPathSwitch_8814A(
