@@ -257,7 +257,7 @@ _LOK_One_Shot(
 
 	PHYDM_DBG(dm, DBG_CMN,  ("============ LOK ============\n"));
 	for(Path =0; Path <=3; Path++){
-		PHYDM_DBG(dm, DBG_CMN, ODM_DBG_TRACE,
+		PHYDM_DBG(dm, DBG_CMN, 
 			("==========S%d LOK ==========\n", Path));
 
 		odm_set_bb_reg(dm, 0x9a4, BIT(21)|BIT(20), Path);	 // ADC Clock source
@@ -278,7 +278,7 @@ _LOK_One_Shot(
 				break;
 			}
 		}
-		PHYDM_DBG(dm, DBG_CMN, ODM_DBG_TRACE,
+		PHYDM_DBG(dm, DBG_CMN, 
 			("S%d ==> delay_count = 0x%d\n", Path, delay_count));
 
 		if(!LOK_notready){
@@ -291,18 +291,18 @@ _LOK_One_Shot(
 				LOK_temp1 = LOK_temp1 + ((LOK_temp1 & BIT(4-ii))<<(ii*2));
 				LOK_temp2 = LOK_temp2 + ((LOK_temp2 & BIT(4-ii))<<(ii*2));
 			}
-			PHYDM_DBG(dm, DBG_CMN, ODM_DBG_TRACE,
+			PHYDM_DBG(dm, DBG_CMN, 
 				("LOK_temp1 = 0x%x, LOK_temp2 = 0x%x\n", LOK_temp1>>4, LOK_temp2>>4));
 
 			odm_set_rf_reg(dm, Path, 0x8, 0x07c00, LOK_temp1>>4);
 			odm_set_rf_reg(dm, Path, 0x8, 0xf8000, LOK_temp2>>4);
 
-			PHYDM_DBG(dm, DBG_CMN, ODM_DBG_TRACE,
+			PHYDM_DBG(dm, DBG_CMN, 
 				("==>S%d fill LOK\n", Path));
 
 		}
 		else{
-			PHYDM_DBG(dm, DBG_CMN, ODM_DBG_TRACE,
+			PHYDM_DBG(dm, DBG_CMN, 
 				("==>S%d LOK Fail!!!\n", Path));
 			odm_set_rf_reg(dm, Path, 0x8, bRFRegOffsetMask, 0x08400);
 		}
@@ -338,7 +338,7 @@ _IQK_One_Shot(
 		}
 
 		for(Path =0; Path <=3; Path++){
-			PHYDM_DBG(dm, DBG_CMN, ODM_DBG_TRACE,
+			PHYDM_DBG(dm, DBG_CMN, 
 				("==========S%d IQK ==========\n", Path));
 			cal_retry = 0;
 			fail = true;
@@ -347,7 +347,7 @@ _IQK_One_Shot(
 				if(idx == TX_IQK){
 					IQK_CMD = (0xf8000001|(*dm->band_width+3)<<8|(1<<(4+Path)));
 
-					PHYDM_DBG(dm, DBG_CMN, ODM_DBG_TRACE,
+					PHYDM_DBG(dm, DBG_CMN, 
 						("TXK_Trigger = 0x%x\n", IQK_CMD));
 						/*
 						{0xf8000311, 0xf8000321, 0xf8000341, 0xf8000381} ==> 20 WBTXK (CMD = 3)
@@ -359,7 +359,7 @@ _IQK_One_Shot(
 				else if(idx == RX_IQK){
 					IQK_CMD = (0xf8000001|(9-*dm->band_width)<<8|(1<<(4+Path)));
 
-					PHYDM_DBG(dm, DBG_CMN, ODM_DBG_TRACE,
+					PHYDM_DBG(dm, DBG_CMN, 
 						("TXK_Trigger = 0x%x\n", IQK_CMD));
 						/*
 						{0xf8000911, 0xf8000921, 0xf8000941, 0xf8000981} ==> 20 WBRXK (CMD = 9)
@@ -394,11 +394,11 @@ _IQK_One_Shot(
 					break;
 
 			}
-			PHYDM_DBG(dm, DBG_CMN, ODM_DBG_TRACE,
+			PHYDM_DBG(dm, DBG_CMN, 
 				("S%d ==> 0x1b00 = 0x%x\n", Path, odm_read_4byte(dm, 0x1b00)));
-			PHYDM_DBG(dm, DBG_CMN, ODM_DBG_TRACE,
+			PHYDM_DBG(dm, DBG_CMN, 
 				("S%d ==> 0x1b08 = 0x%x\n", Path, odm_read_4byte(dm, 0x1b08)));
-			PHYDM_DBG(dm, DBG_CMN, ODM_DBG_TRACE,
+			PHYDM_DBG(dm, DBG_CMN, 
 				("S%d ==> delay_count = 0x%d, cal_retry = %x\n", Path, delay_count, cal_retry));
 
 			odm_write_4byte(dm, 0x1b00, 0xf8000000|(Path<<1));
@@ -410,7 +410,7 @@ _IQK_One_Shot(
 					odm_write_4byte(dm, 0x1b3c, 0x20000000);
 					pIQK_info->iqc_matrix[idx][Path] = odm_read_4byte(dm, 0x1b3c);
 				}
-				PHYDM_DBG(dm, DBG_CMN, ODM_DBG_TRACE,
+				PHYDM_DBG(dm, DBG_CMN, 
 					("S%d_IQC = 0x%x\n", Path, pIQK_info->iqc_matrix[idx][Path]));
 
 			}

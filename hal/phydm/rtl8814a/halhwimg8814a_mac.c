@@ -53,14 +53,14 @@ u4Byte    driver3 = 0;
 				(dm->type_alna & 0xFF00) << 8 |
 				(dm->type_apa & 0xFF00)  << 16;
 
-	PHYDM_DBG(dm, ODM_COMP_INIT, ODM_DBG_TRACE, 
+	PHYDM_DBG(dm, ODM_COMP_INIT,  
 	("===> check_positive (cond1, cond2, cond3, cond4) = (0x%X 0x%X 0x%X 0x%X)\n", cond1, cond2, cond3, cond4));
-	PHYDM_DBG(dm, ODM_COMP_INIT, ODM_DBG_TRACE, 
+	PHYDM_DBG(dm, ODM_COMP_INIT,  
 	("===> check_positive (driver1, driver2, driver3, driver4) = (0x%X 0x%X 0x%X 0x%X)\n", driver1, driver2, driver3, driver4));
 
-	PHYDM_DBG(dm, ODM_COMP_INIT, ODM_DBG_TRACE, 
+	PHYDM_DBG(dm, ODM_COMP_INIT,  
 	("	(Platform, Interface) = (0x%X, 0x%X)\n", dm->support_platform, dm->support_interface));
-	PHYDM_DBG(dm, ODM_COMP_INIT, ODM_DBG_TRACE, 
+	PHYDM_DBG(dm, ODM_COMP_INIT,  
 	("	(Board, Package) = (0x%X, 0x%X)\n", dm->board_type, dm->package_type));
 
 
