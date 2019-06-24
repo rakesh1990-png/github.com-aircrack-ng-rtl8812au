@@ -51,13 +51,13 @@ CheckRFGainOffset(
 	struct dm_rf_calibration_struct  *  cali_info = &(dm->rf_calibrate_info);
 	if(Method == MIX_MODE)	//normal Tx power tracking
 	{
-		PHYDM_DBG(dm,DBG_COMP_MCC, ("is 8814 MP chip\n"));
+		PHYDM_DBG(dm,DBG_COMP_MCC,"is 8814 MP chip\n");
 		bit_mask = BIT(19);
 		cali_info->absolute_ofdm_swing_idx[RFPath] = cali_info->absolute_ofdm_swing_idx[RFPath] + cali_info->kfree_offset[RFPath];
 
 
-		PHYDM_DBG(dm, DBG_COMP_MCC,  ("=========================== [Path-%d] TXBB Offset============================\n", RFPath));
-		PHYDM_DBG(dm, DBG_COMP_MCC,  ("absolute_ofdm_swing_idx[RFPath](%d) = absolute_ofdm_swing_idx[RFPath](%d) + kfree_offset[RFPath](%d), RFPath=%d\n", cali_info->absolute_ofdm_swing_idx[RFPath], cali_info->absolute_ofdm_swing_idx[RFPath], cali_info->kfree_offset[RFPath], RFPath));
+		PHYDM_DBG(dm, DBG_COMP_MCC,"=========================== [Path-%d] TXBB Offset============================\n", RFPath);
+		PHYDM_DBG(dm, DBG_COMP_MCC,"absolute_ofdm_swing_idx[RFPath](%d) = absolute_ofdm_swing_idx[RFPath](%d) + kfree_offset[RFPath](%d), RFPath=%d\n", cali_info->absolute_ofdm_swing_idx[RFPath], cali_info->absolute_ofdm_swing_idx[RFPath], cali_info->kfree_offset[RFPath], RFPath);
 
 		if (cali_info->absolute_ofdm_swing_idx[RFPath] >= 0)				/* check if RF_Index is positive or not*/
 			bPositive = true;
@@ -77,12 +77,12 @@ CheckRFGainOffset(
 
 		Final_OFDM_Swing_Index = cali_info->default_ofdm_index + (cali_info->absolute_ofdm_swing_idx[RFPath] - (UpperBound << 1));
 
-		PHYDM_DBG(dm, DBG_COMP_MCC,  ("Final_OFDM_Swing_Index(%d) = default_ofdm_index(%d) + (absolute_ofdm_swing_idx[RFPath](%d) - (UpperBound(%d) << 1)), RFPath=%d\n", Final_OFDM_Swing_Index, cali_info->default_ofdm_index, cali_info->absolute_ofdm_swing_idx[RFPath], UpperBound, RFPath));
+		PHYDM_DBG(dm, DBG_COMP_MCC,"Final_OFDM_Swing_Index(%d) = default_ofdm_index(%d) + (absolute_ofdm_swing_idx[RFPath](%d) - (UpperBound(%d) << 1)), RFPath=%d\n", Final_OFDM_Swing_Index, cali_info->default_ofdm_index, cali_info->absolute_ofdm_swing_idx[RFPath], UpperBound, RFPath);
 
 		if (Final_OFDM_Swing_Index > TxScalingUpperBound) {	/* bb swing upper bound = +2dB */
 			Final_OFDM_Swing_Index = TxScalingUpperBound;
-			PHYDM_DBG(dm, DBG_COMP_MCC,  ("Final_OFDM_Swing_Index(%d) > TxScalingUpperBound(%d)   Final_OFDM_Swing_Index = TxScalingUpperBound\n", Final_OFDM_Swing_Index, TxScalingUpperBound));
-			PHYDM_DBG(dm, DBG_COMP_MCC,  ("===========================================================================\n"));
+			PHYDM_DBG(dm, DBG_COMP_MCC,"Final_OFDM_Swing_Index(%d) > TxScalingUpperBound(%d)   Final_OFDM_Swing_Index = TxScalingUpperBound\n", Final_OFDM_Swing_Index, TxScalingUpperBound);
+			PHYDM_DBG(dm, DBG_COMP_MCC,"===========================================================================\n");
 		}
 
 		return Final_OFDM_Swing_Index;
@@ -93,12 +93,12 @@ CheckRFGainOffset(
 
 		Final_OFDM_Swing_Index = cali_info->default_ofdm_index - ((LowerBound<<1) - cali_info->absolute_ofdm_swing_idx[RFPath]);
 
-		PHYDM_DBG(dm, DBG_COMP_MCC,  ("Final_OFDM_Swing_Index(%d) = default_ofdm_index(%d) - ((LowerBound(%d)<<1) - absolute_ofdm_swing_idx[RFPath](%d)), RFPath=%d\n", Final_OFDM_Swing_Index, cali_info->default_ofdm_index, LowerBound, cali_info->absolute_ofdm_swing_idx[RFPath], RFPath));
+		PHYDM_DBG(dm, DBG_COMP_MCC,"Final_OFDM_Swing_Index(%d) = default_ofdm_index(%d) - ((LowerBound(%d)<<1) - absolute_ofdm_swing_idx[RFPath](%d)), RFPath=%d\n", Final_OFDM_Swing_Index, cali_info->default_ofdm_index, LowerBound, cali_info->absolute_ofdm_swing_idx[RFPath], RFPath);
 
 		if (Final_OFDM_Swing_Index < TxScalingLowerBound) {	/* BB swing lower bound = -10dB */
 			Final_OFDM_Swing_Index = TxScalingLowerBound;
-			PHYDM_DBG(dm, DBG_COMP_MCC,  ("Final_OFDM_Swing_Index(%d) > TxScalingLowerBound(%d)   Final_OFDM_Swing_Index = TxScalingLowerBound\n", Final_OFDM_Swing_Index, TxScalingLowerBound));
-			PHYDM_DBG(dm, DBG_COMP_MCC,  ("===========================================================================\n"));
+			PHYDM_DBG(dm, DBG_COMP_MCC,"Final_OFDM_Swing_Index(%d) > TxScalingLowerBound(%d)   Final_OFDM_Swing_Index = TxScalingLowerBound\n", Final_OFDM_Swing_Index, TxScalingLowerBound);
+			PHYDM_DBG(dm, DBG_COMP_MCC,"===========================================================================\n");
 		}
 		return Final_OFDM_Swing_Index;
 	}
@@ -112,8 +112,8 @@ CheckRFGainOffset(
 
 		Final_OFDM_Swing_Index = cali_info->default_ofdm_index + (cali_info->absolute_ofdm_swing_idx[RFPath])%2;
 
-		PHYDM_DBG(dm, DBG_COMP_MCC,  ("Final_OFDM_Swing_Index(%d) = default_ofdm_index(%d) + (absolute_ofdm_swing_idx[RFPath])//2(%d), RFPath=%d\n", Final_OFDM_Swing_Index, cali_info->default_ofdm_index, (cali_info->absolute_ofdm_swing_idx[RFPath])%2, RFPath));
-		PHYDM_DBG(dm, DBG_COMP_MCC,  ("===========================================================================\n"));
+		PHYDM_DBG(dm, DBG_COMP_MCC,"Final_OFDM_Swing_Index(%d) = default_ofdm_index(%d) + (absolute_ofdm_swing_idx[RFPath])//2(%d), RFPath=%d\n", Final_OFDM_Swing_Index, cali_info->default_ofdm_index, (cali_info->absolute_ofdm_swing_idx[RFPath])%2, RFPath);
+		PHYDM_DBG(dm, DBG_COMP_MCC,"===========================================================================\n");
 
 		return Final_OFDM_Swing_Index;
 	}
@@ -138,8 +138,7 @@ ODM_TxPwrTrackSetPwr8814A(
 
 		if (Method == MIX_MODE)
 		{
-			PHYDM_DBG(dm, DBG_COMP_MCC,  ("cali_info->default_ofdm_index=%d, cali_info->absolute_ofdm_swing_idx[RFPath]=%d, RF_Path = %d\n",
-				cali_info->default_ofdm_index, cali_info->absolute_ofdm_swing_idx[RFPath], RFPath));
+			PHYDM_DBG(dm, DBG_COMP_MCC,"cali_info->default_ofdm_index=%d, cali_info->absolute_ofdm_swing_idx[RFPath]=%d, RF_Path = %d\n",				cali_info->default_ofdm_index, cali_info->absolute_ofdm_swing_idx[RFPath], RFPath);
 
 			Final_OFDM_Swing_Index = CheckRFGainOffset(dm, MIX_MODE, RFPath);
 		}
@@ -158,7 +157,7 @@ ODM_TxPwrTrackSetPwr8814A(
 
 		if((Method == MIX_MODE) || (Method == BBSWING))
 		{
-			PHYDM_DBG(dm, DBG_COMP_MCC,  ("=========================== [Path-%d] BBSWING Offset============================\n", RFPath));
+			PHYDM_DBG(dm, DBG_COMP_MCC,"=========================== [Path-%d] BBSWING Offset============================\n", RFPath);
 
 			switch(RFPath)
 			{
@@ -166,42 +165,37 @@ ODM_TxPwrTrackSetPwr8814A(
 
 					odm_set_bb_reg(dm, rA_TxScale_Jaguar, 0xFFE00000, tx_scaling_table_jaguar[Final_OFDM_Swing_Index]);	//set BBswing
 
-					PHYDM_DBG(dm,DBG_COMP_MCC,
-						("******Path_A Compensate with BBSwing , Final_OFDM_Swing_Index = %d \n", Final_OFDM_Swing_Index));
+					PHYDM_DBG(dm,DBG_COMP_MCC,"******Path_A Compensate with BBSwing , Final_OFDM_Swing_Index = %d \n", Final_OFDM_Swing_Index);
 					break;
 
 				case RF_PATH_B:
 
 					odm_set_bb_reg(dm, rB_TxScale_Jaguar, 0xFFE00000, tx_scaling_table_jaguar[Final_OFDM_Swing_Index]);	//set BBswing
 
-					PHYDM_DBG(dm,DBG_COMP_MCC,
-						("******Path_B Compensate with BBSwing , Final_OFDM_Swing_Index = %d \n", Final_OFDM_Swing_Index));
+					PHYDM_DBG(dm,DBG_COMP_MCC,"******Path_B Compensate with BBSwing , Final_OFDM_Swing_Index = %d \n", Final_OFDM_Swing_Index);
 					break;
 
 				case RF_PATH_C:
 
 					odm_set_bb_reg(dm, rC_TxScale_Jaguar2, 0xFFE00000, tx_scaling_table_jaguar[Final_OFDM_Swing_Index]);	//set BBswing
 
-					PHYDM_DBG(dm,DBG_COMP_MCC,
-						("******Path_C Compensate with BBSwing , Final_OFDM_Swing_Index = %d \n", Final_OFDM_Swing_Index));
+					PHYDM_DBG(dm,DBG_COMP_MCC,"******Path_C Compensate with BBSwing , Final_OFDM_Swing_Index = %d \n", Final_OFDM_Swing_Index);
 			            	break;
 
 				case RF_PATH_D:
 
 					odm_set_bb_reg(dm, rD_TxScale_Jaguar2, 0xFFE00000, tx_scaling_table_jaguar[Final_OFDM_Swing_Index]);	//set BBswing
 
-					PHYDM_DBG(dm,DBG_COMP_MCC,
-						("******Path_D Compensate with BBSwing , Final_OFDM_Swing_Index = %d \n", Final_OFDM_Swing_Index));
+					PHYDM_DBG(dm,DBG_COMP_MCC,"******Path_D Compensate with BBSwing , Final_OFDM_Swing_Index = %d \n", Final_OFDM_Swing_Index);
 					break;
 
 				default:
-					PHYDM_DBG(dm,DBG_COMP_MCC,
-						("Wrong Path name!!!! \n"));
+					PHYDM_DBG(dm,DBG_COMP_MCC,"Wrong Path name!!!! \n");
 
 				break;
 			}
 
-			PHYDM_DBG(dm, DBG_COMP_MCC,  ("===========================================================================\n"));
+			PHYDM_DBG(dm, DBG_COMP_MCC,"===========================================================================\n");
 		}
 		return;
 }	// ODM_TxPwrTrackSetPwr8814A
@@ -254,7 +248,7 @@ GetDeltaSwingTable_8814A(
 		}
 	}
 
-	PHYDM_DBG(dm, DBG_COMP_MCC,  ("Power Tracking TxRate=0x%X\n", TxRate));
+	PHYDM_DBG(dm, DBG_COMP_MCC,"Power Tracking TxRate=0x%X\n", TxRate);
 
 	if (1 <= channel && channel <= 14) {
 		if (IS_CCK_RATE(TxRate)) {
@@ -343,7 +337,7 @@ GetDeltaSwingTable_8814A_PathCD(
 		}
 	}
 
-	PHYDM_DBG(dm, DBG_COMP_MCC,  ("Power Tracking TxRate=0x%X\n", TxRate));
+	PHYDM_DBG(dm, DBG_COMP_MCC,"Power Tracking TxRate=0x%X\n", TxRate);
 
 	if ( 1 <= channel && channel <= 14) {
 		if (IS_CCK_RATE(TxRate)) {
@@ -429,7 +423,7 @@ _phy_lc_calibrate_8814a(
 			break;
 		ODM_delay_ms(10);
 	}
-	PHYDM_DBG(dm, DBG_CMN,  ("retry cnt = %d\n", cnt));
+	PHYDM_DBG(dm, DBG_CMN,"retry cnt = %d\n", cnt);
 
 	odm_set_rf_reg( dm, RF_PATH_A, RF_CHNLBW, bRFRegOffsetMask, 0x13126);
 	odm_set_rf_reg( dm, RF_PATH_A, RF_CHNLBW, bRFRegOffsetMask, 0x13124);
@@ -481,13 +475,13 @@ phy_lc_calibrate_8814a(
 #endif
 #endif
 
-	PHYDM_DBG(dm, DBG_CMN,  ("===> PHY_LCCalibrate_8814A\n"));
+	PHYDM_DBG(dm, DBG_CMN,"===> PHY_LCCalibrate_8814A\n");
 
 //#if (MP_DRIVER == 1)
 	_phy_lc_calibrate_8814a(dm, true);
 //#endif
 
-	PHYDM_DBG(dm, DBG_CMN,  ("<=== PHY_LCCalibrate_8814A\n"));
+	PHYDM_DBG(dm, DBG_CMN,"<=== PHY_LCCalibrate_8814A\n");
 
 }
 

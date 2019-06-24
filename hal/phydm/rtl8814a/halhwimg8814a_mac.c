@@ -53,15 +53,11 @@ u4Byte    driver3 = 0;
 				(dm->type_alna & 0xFF00) << 8 |
 				(dm->type_apa & 0xFF00)  << 16;
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  
-	("===> check_positive (cond1, cond2, cond3, cond4) = (0x%X 0x%X 0x%X 0x%X)\n", cond1, cond2, cond3, cond4));
-	PHYDM_DBG(dm, ODM_COMP_INIT,  
-	("===> check_positive (driver1, driver2, driver3, driver4) = (0x%X 0x%X 0x%X 0x%X)\n", driver1, driver2, driver3, driver4));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> check_positive (cond1, cond2, cond3, cond4) = (0x%X 0x%X 0x%X 0x%X)\n", cond1, cond2, cond3, cond4);
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> check_positive (driver1, driver2, driver3, driver4) = (0x%X 0x%X 0x%X 0x%X)\n", driver1, driver2, driver3, driver4);
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  
-	("	(Platform, Interface) = (0x%X, 0x%X)\n", dm->support_platform, dm->support_interface));
-	PHYDM_DBG(dm, ODM_COMP_INIT,  
-	("	(Board, Package) = (0x%X, 0x%X)\n", dm->board_type, dm->package_type));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"	(Platform, Interface) = (0x%X, 0x%X)\n", dm->support_platform, dm->support_interface);
+	PHYDM_DBG(dm, ODM_COMP_INIT,"	(Board, Package) = (0x%X, 0x%X)\n", dm->board_type, dm->package_type);
 
 
 	/*============== Value Defined Check ===============*/
@@ -274,7 +270,7 @@ odm_read_and_config_mp_8814a_mac_reg(
 	
 	u4Byte	v1 = 0, v2 = 0, pre_v1 = 0, pre_v2 = 0;
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  ("===> ODM_ReadAndConfig_MP_8814A_MAC_REG\n"));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> ODM_ReadAndConfig_MP_8814A_MAC_REG\n");
 
 	while ((i + 1) < array_len) {
 		v1 = array[i];
@@ -286,14 +282,14 @@ odm_read_and_config_mp_8814a_mac_reg(
 				if (c_cond == COND_ENDIF) {/*end*/
 					is_matched = true;
 					is_skipped = false;
-					PHYDM_DBG(dm, ODM_COMP_INIT,  ("ENDIF\n"));
+					PHYDM_DBG(dm, ODM_COMP_INIT,"ENDIF\n");
 				} else if (c_cond == COND_ELSE) { /*else*/
 					is_matched = is_skipped?false:true;
-					PHYDM_DBG(dm, ODM_COMP_INIT,  ("ELSE\n"));
+					PHYDM_DBG(dm, ODM_COMP_INIT,"ELSE\n");
 				} else {/*if , else if*/
 					pre_v1 = v1;
 					pre_v2 = v2;
-					PHYDM_DBG(dm, ODM_COMP_INIT,  ("IF or ELSE IF\n"));
+					PHYDM_DBG(dm, ODM_COMP_INIT,"IF or ELSE IF\n");
 				}
 			} else if (v1 & BIT(30)) { /*negative condition*/
 				if (is_skipped == false) {

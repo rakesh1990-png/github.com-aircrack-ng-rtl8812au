@@ -61,7 +61,7 @@ odm_config_rf_radio_a_8814a(
 
     odm_config_rf_reg_8814a(dm, Addr, Data, RF_PATH_A, Addr|maskforPhySet);
 
-    PHYDM_DBG(dm,ODM_COMP_INIT,  ("===> ODM_ConfigRFWithHeaderFile: [RadioA] %08X %08X\n", Addr, Data));
+    PHYDM_DBG(dm,ODM_COMP_INIT,"===> ODM_ConfigRFWithHeaderFile: [RadioA] %08X %08X\n", Addr, Data);
 }
 
 void 
@@ -76,7 +76,7 @@ odm_config_rf_radio_b_8814a(
 
     odm_config_rf_reg_8814a(dm, Addr, Data, RF_PATH_B, Addr|maskforPhySet);
 	
-	PHYDM_DBG(dm,ODM_COMP_INIT,  ("===> ODM_ConfigRFWithHeaderFile: [RadioB] %08X %08X\n", Addr, Data));
+	PHYDM_DBG(dm,ODM_COMP_INIT,"===> ODM_ConfigRFWithHeaderFile: [RadioB] %08X %08X\n", Addr, Data);
     
 }
 
@@ -92,7 +92,7 @@ odm_config_rf_radio_c_8814a(
 
     odm_config_rf_reg_8814a(dm, Addr, Data, RF_PATH_C, Addr|maskforPhySet);
 	
-	PHYDM_DBG(dm,ODM_COMP_INIT,  ("===> ODM_ConfigRFWithHeaderFile: [RadioC] %08X %08X\n", Addr, Data));
+	PHYDM_DBG(dm,ODM_COMP_INIT,"===> ODM_ConfigRFWithHeaderFile: [RadioC] %08X %08X\n", Addr, Data);
     
 }
 
@@ -108,7 +108,7 @@ odm_config_rf_radio_d_8814a(
 
     odm_config_rf_reg_8814a(dm, Addr, Data, RF_PATH_D, Addr|maskforPhySet);
 	
-	PHYDM_DBG(dm,ODM_COMP_INIT,  ("===> ODM_ConfigRFWithHeaderFile: [RadioD] %08X %08X\n", Addr, Data));
+	PHYDM_DBG(dm,ODM_COMP_INIT,"===> ODM_ConfigRFWithHeaderFile: [RadioD] %08X %08X\n", Addr, Data);
     
 }
 
@@ -120,7 +120,7 @@ odm_config_mac_8814a(
  	)
 {
 	odm_write_1byte(dm, Addr, Data);
-    PHYDM_DBG(dm,ODM_COMP_INIT,  ("===> ODM_ConfigMACWithHeaderFile: [MAC_REG] %08X %08X\n", Addr, Data));
+    PHYDM_DBG(dm,ODM_COMP_INIT,"===> ODM_ConfigMACWithHeaderFile: [MAC_REG] %08X %08X\n", Addr, Data);
 }
 
 void 
@@ -135,7 +135,7 @@ odm_config_bb_agc_8814a(
 	// Add 1us delay between BB/RF register setting.
 	ODM_delay_us(1);
 
-    PHYDM_DBG(dm,ODM_COMP_INIT,  ("===> ODM_ConfigBBWithHeaderFile: [AGC_TAB] %08X %08X\n", Addr, Data));
+    PHYDM_DBG(dm,ODM_COMP_INIT,"===> ODM_ConfigBBWithHeaderFile: [AGC_TAB] %08X %08X\n", Addr, Data);
 }
 
 void
@@ -161,7 +161,7 @@ odm_config_bb_phy_reg_pg_8814a(
 	    phy_store_tx_power_by_rate(dm->adapter, Band, RfPath, TxNum, Addr, Bitmask, Data);
 #endif
     }
-	PHYDM_DBG(dm,ODM_COMP_INIT,  ("===> ODM_ConfigBBWithHeaderFile: [PHY_REG] %08X %08X %08X\n", Addr, Bitmask, Data));
+	PHYDM_DBG(dm,ODM_COMP_INIT,"===> ODM_ConfigBBWithHeaderFile: [PHY_REG] %08X %08X %08X\n", Addr, Bitmask, Data);
 }
 
 void 
@@ -195,7 +195,7 @@ odm_config_bb_phy_8814a(
 	
 	// Add 1us delay between BB/RF register setting.
 	ODM_delay_us(1);
-    PHYDM_DBG(dm,ODM_COMP_INIT,  ("===> ODM_ConfigBBWithHeaderFile: [PHY_REG] %08X %08X\n", Addr, Data));
+    PHYDM_DBG(dm,ODM_COMP_INIT,"===> ODM_ConfigBBWithHeaderFile: [PHY_REG] %08X %08X\n", Addr, Data);
 }
 
 void

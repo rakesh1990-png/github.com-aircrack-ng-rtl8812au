@@ -54,7 +54,7 @@ CheckRFGainOffset(
 
 	if(Method == MIX_MODE)	//normal Tx power tracking
 	{
-		PHYDM_DBG(dm,DBG_COMP_MCC, ("is 8814 MP chip\n"));
+		PHYDM_DBG(dm,DBG_COMP_MCC,"is 8814 MP chip\n");
 		bit_mask = BIT(19);
 		pRFCalibrateInfo->Absolute_OFDMSwingIdx[RFPath] = pRFCalibrateInfo->Absolute_OFDMSwingIdx[RFPath] + pRFCalibrateInfo->KfreeOffset[RFPath];
 
@@ -124,8 +124,7 @@ ODM_TxPwrTrackSetPwr8814A(
 
 		if (Method == MIX_MODE)
 		{
-			PHYDM_DBG(dm,DBG_COMP_MCC, ("dm->DefaultOfdmIndex=%d, dm->Absolute_OFDMSwingIdx[RFPath]=%d, RF_Path = %d\n",
-				pRFCalibrateInfo->DefaultOfdmIndex, pRFCalibrateInfo->Absolute_OFDMSwingIdx[RFPath], RFPath));
+			PHYDM_DBG(dm,DBG_COMP_MCC,"dm->DefaultOfdmIndex=%d, dm->Absolute_OFDMSwingIdx[RFPath]=%d, RF_Path = %d\n",				pRFCalibrateInfo->DefaultOfdmIndex, pRFCalibrateInfo->Absolute_OFDMSwingIdx[RFPath], RFPath);
 
 			Final_OFDM_Swing_Index = CheckRFGainOffset(dm, MIX_MODE, RFPath);
 		}
@@ -150,37 +149,32 @@ ODM_TxPwrTrackSetPwr8814A(
 
 					ODM_SetBBReg(dm, rA_TxScale_Jaguar, 0xFFE00000, TxScalingTable_Jaguar[Final_OFDM_Swing_Index]);	//set BBswing
 
-					PHYDM_DBG(dm,DBG_COMP_MCC,
-						("******Path_A Compensate with BBSwing , Final_OFDM_Swing_Index = %d \n", Final_OFDM_Swing_Index));
+					PHYDM_DBG(dm,DBG_COMP_MCC,"******Path_A Compensate with BBSwing , Final_OFDM_Swing_Index = %d \n", Final_OFDM_Swing_Index);
 					break;
 
 				case ODM_RF_PATH_B:
 
 					ODM_SetBBReg(dm, rB_TxScale_Jaguar, 0xFFE00000, TxScalingTable_Jaguar[Final_OFDM_Swing_Index]);	//set BBswing
 
-					PHYDM_DBG(dm,DBG_COMP_MCC,
-						("******Path_B Compensate with BBSwing , Final_OFDM_Swing_Index = %d \n", Final_OFDM_Swing_Index));
+					PHYDM_DBG(dm,DBG_COMP_MCC,"******Path_B Compensate with BBSwing , Final_OFDM_Swing_Index = %d \n", Final_OFDM_Swing_Index);
 					break;
 
 				case ODM_RF_PATH_C:
 
 					ODM_SetBBReg(dm, rC_TxScale_Jaguar2, 0xFFE00000, TxScalingTable_Jaguar[Final_OFDM_Swing_Index]);	//set BBswing
 
-					PHYDM_DBG(dm,DBG_COMP_MCC,
-						("******Path_C Compensate with BBSwing , Final_OFDM_Swing_Index = %d \n", Final_OFDM_Swing_Index));
+					PHYDM_DBG(dm,DBG_COMP_MCC,"******Path_C Compensate with BBSwing , Final_OFDM_Swing_Index = %d \n", Final_OFDM_Swing_Index);
 			            	break;
 
 				case ODM_RF_PATH_D:
 
 					ODM_SetBBReg(dm, rD_TxScale_Jaguar2, 0xFFE00000, TxScalingTable_Jaguar[Final_OFDM_Swing_Index]);	//set BBswing
 
-					PHYDM_DBG(dm,DBG_COMP_MCC,
-						("******Path_D Compensate with BBSwing , Final_OFDM_Swing_Index = %d \n", Final_OFDM_Swing_Index));
+					PHYDM_DBG(dm,DBG_COMP_MCC,"******Path_D Compensate with BBSwing , Final_OFDM_Swing_Index = %d \n", Final_OFDM_Swing_Index);
 					break;
 
 				default:
-					PHYDM_DBG(dm,DBG_COMP_MCC,
-						("Wrong Path name!!!! \n"));
+					PHYDM_DBG(dm,DBG_COMP_MCC,"Wrong Path name!!!! \n");
 
 				break;
 			}
@@ -332,7 +326,7 @@ ODM_CheckPowerStatus(
 	// 2011/07/27 MH We are not testing ready~~!! We may fail to get correct value when init sequence.
 	if (pMgntInfo->init_adpt_in_progress == true)
 	{
-	PHYDM_DBG(dm,COMP_INIT, DBG_LOUD, ("ODM_CheckPowerStatus Return true, due to initadapter"));
+	PHYDM_DBG(dm,COMP_INIT, DBG_LOUD,"ODM_CheckPowerStatus Return true, due to initadapter");
 	return	true;
 	}
 
@@ -342,8 +336,7 @@ ODM_CheckPowerStatus(
 	adapter->HalFunc.GetHwRegHandler(adapter, HW_VAR_RF_STATE, (pu1Byte)(&rtState));
 	if(adapter->bDriverStopped || adapter->bDriverIsGoingToPnpSetPowerSleep || rtState == eRfOff)
 	{
-	PHYDM_DBG(dm,COMP_INIT, DBG_LOUD, ("ODM_CheckPowerStatus Return false, due to %d/%d/%d\n",
-	adapter->bDriverStopped, adapter->bDriverIsGoingToPnpSetPowerSleep, rtState));
+	PHYDM_DBG(dm,COMP_INIT, DBG_LOUD,"ODM_CheckPowerStatus Return false, due to %d/%d/%d\n",	adapter->bDriverStopped, adapter->bDriverIsGoingToPnpSetPowerSleep, rtState);
 	return	false;
 	}
 	 */
@@ -377,7 +370,7 @@ VOID
 		return;
 #endif
 
-	PHYDM_DBG(dm,DBG_CMN,  ("Save ADDA parameters.\n"));
+	PHYDM_DBG(dm,DBG_CMN,"Save ADDA parameters.\n");
 	for( i = 0 ; i < RegisterNum ; i++){
 		ADDABackup[i] = ODM_GetBBReg(dm, ADDAReg[i], MASKDWORD);
 	}
@@ -405,7 +398,7 @@ VOID
 	PDM_ODM_T		dm = &hal_data->DM_OutSrc;
 #endif
 #endif
-	PHYDM_DBG(dm,DBG_CMN,  ("Save MAC parameters.\n"));
+	PHYDM_DBG(dm,DBG_CMN,"Save MAC parameters.\n");
 	for( i = 0 ; i < (IQK_MAC_REG_NUM - 1); i++){
 		MACBackup[i] = ODM_Read1Byte(dm, MACReg[i]);
 	}
@@ -437,7 +430,7 @@ VOID
 #endif
 #endif
 
-	PHYDM_DBG(dm,DBG_CMN,  ("Reload ADDA power saving parameters !\n"));
+	PHYDM_DBG(dm,DBG_CMN,"Reload ADDA power saving parameters !\n");
 	for(i = 0 ; i < RegiesterNum; i++)
 	{
 		ODM_SetBBReg(dm, ADDAReg[i], MASKDWORD, ADDABackup[i]);
@@ -465,7 +458,7 @@ VOID
 	PDM_ODM_T		dm = &hal_data->DM_OutSrc;
 #endif
 #endif
-	PHYDM_DBG(dm,DBG_CMN,   ("Reload MAC parameters !\n"));
+	PHYDM_DBG(dm,DBG_CMN,"Reload MAC parameters !\n");
 	for(i = 0 ; i < (IQK_MAC_REG_NUM - 1); i++){
 		ODM_Write1Byte(dm, MACReg[i], (u1Byte)MACBackup[i]);
 	}
@@ -495,7 +488,7 @@ VOID
 	PDM_ODM_T		dm = &hal_data->DM_OutSrc;
 #endif
 #endif
-	PHYDM_DBG(dm,DBG_CMN,  ("MAC settings for Calibration.\n"));
+	PHYDM_DBG(dm,DBG_CMN,"MAC settings for Calibration.\n");
 
 	ODM_Write1Byte(dm, MACReg[i], 0x3F);
 
@@ -546,7 +539,7 @@ VOID
 			break;
 		ODM_delay_ms(10);
 	}
-	PHYDM_DBG(dm,DBG_CMN,  ("retry cnt = %d\n", cnt));
+	PHYDM_DBG(dm,DBG_CMN,"retry cnt = %d\n", cnt);
 
 
 	//3 Restore original situation
@@ -686,8 +679,8 @@ VOID
 
 #endif
 
-	PHYDM_DBG(dm,DBG_CMN,  ("==>phy_APCalibrate_8814A() delta %d\n", delta));
-	PHYDM_DBG(dm,DBG_CMN,   ("AP Calibration for %s\n", (is2T ? "2T2R" : "1T1R")));
+	PHYDM_DBG(dm,DBG_CMN,"==>phy_APCalibrate_8814A() delta %d\n", delta);
+	PHYDM_DBG(dm,DBG_CMN,"AP Calibration for %s\n", (is2T ? "2T2R" : "1T1R"));
 	if(!is2T)
 		pathbound = 1;
 
@@ -754,7 +747,7 @@ VOID
 			for(index = 0; index < 11; index ++)
 			{
 				ODM_SetBBReg(dm, offset, MASKDWORD, APK_normal_setting_value_1[index]);
-				PHYDM_DBG(dm,DBG_CMN,  ("phy_APCalibrate_8814A() offset 0x%x value 0x%x\n", offset, ODM_GetBBReg(dm, offset, MASKDWORD)));
+				PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0x%x value 0x%x\n", offset, ODM_GetBBReg(dm, offset, MASKDWORD));
 
 				offset += 0x04;
 			}
@@ -765,7 +758,7 @@ VOID
 			for(; index < 13; index ++)
 			{
 				ODM_SetBBReg(dm, offset, MASKDWORD, APK_normal_setting_value_1[index]);
-				PHYDM_DBG(dm,DBG_CMN,  ("phy_APCalibrate_8814A() offset 0x%x value 0x%x\n", offset, ODM_GetBBReg(dm, offset, MASKDWORD)));
+				PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0x%x value 0x%x\n", offset, ODM_GetBBReg(dm, offset, MASKDWORD));
 
 				offset += 0x04;
 			}
@@ -778,7 +771,7 @@ VOID
 			for(index = 0; index < 16; index++)
 			{
 				ODM_SetBBReg(dm, offset, MASKDWORD, APK_normal_setting_value_2[index]);
-				PHYDM_DBG(dm,DBG_CMN,  ("phy_APCalibrate_8814A() offset 0x%x value 0x%x\n", offset, ODM_GetBBReg(dm, offset, MASKDWORD)));
+				PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0x%x value 0x%x\n", offset, ODM_GetBBReg(dm, offset, MASKDWORD));
 
 				offset += 0x04;
 			}
@@ -793,7 +786,7 @@ VOID
 			for(index = 0; index < 10; index ++)
 			{
 				ODM_SetBBReg(dm, offset, MASKDWORD, APK_normal_setting_value_1[index]);
-				PHYDM_DBG(dm,DBG_CMN,  ("phy_APCalibrate_8814A() offset 0x%x value 0x%x\n", offset, ODM_GetBBReg(dm, offset, MASKDWORD)));
+				PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0x%x value 0x%x\n", offset, ODM_GetBBReg(dm, offset, MASKDWORD));
 
 				offset += 0x04;
 			}
@@ -805,7 +798,7 @@ VOID
 			for(; index < 13; index ++) //offset 0xb68, 0xb6c
 			{
 				ODM_SetBBReg(dm, offset, MASKDWORD, APK_normal_setting_value_1[index]);
-				PHYDM_DBG(dm,DBG_CMN,   ("phy_APCalibrate_8814A() offset 0x%x value 0x%x\n", offset, ODM_GetBBReg(dm, offset, MASKDWORD)));
+				PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0x%x value 0x%x\n", offset, ODM_GetBBReg(dm, offset, MASKDWORD));
 
 				offset += 0x04;
 			}
@@ -818,7 +811,7 @@ VOID
 			for(index = 0; index < 16; index++)
 			{
 				ODM_SetBBReg(dm, offset, MASKDWORD, APK_normal_setting_value_2[index]);
-				PHYDM_DBG(dm,DBG_CMN,   ("phy_APCalibrate_8814A() offset 0x%x value 0x%x\n", offset, ODM_GetBBReg(dm, offset, MASKDWORD)));
+				PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0x%x value 0x%x\n", offset, ODM_GetBBReg(dm, offset, MASKDWORD));
 
 				offset += 0x04;
 			}
@@ -835,7 +828,7 @@ VOID
 		//Path A AFE all on, path B AFE All off or vise versa
 		for(index = 0; index < IQK_ADDA_REG_NUM ; index++)
 			ODM_SetBBReg(dm, AFE_REG[index], MASKDWORD, AFE_on_off[path]);
-		PHYDM_DBG(dm,DBG_CMN,  ("phy_APCalibrate_8814A() offset 0xe70 %x\n", ODM_GetBBReg(dm, rRx_Wait_CCA, MASKDWORD)));
+		PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0xe70 %x\n", ODM_GetBBReg(dm, rRx_Wait_CCA, MASKDWORD));
 
 		//BB to AP mode
 		if(path == 0)
@@ -863,7 +856,7 @@ VOID
 
 		}
 
-		PHYDM_DBG(dm,DBG_CMN,  ("phy_APCalibrate_8814A() offset 0x800 %x\n", ODM_GetBBReg(dm, 0x800, MASKDWORD)));
+		PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0x800 %x\n", ODM_GetBBReg(dm, 0x800, MASKDWORD));
 
 		//MAC settings
 #if !(DM_ODM_SUPPORT_TYPE & ODM_AP)
@@ -910,7 +903,7 @@ VOID
 
 				BB_offset += delta_V;
 
-				PHYDM_DBG(dm,DBG_CMN,  ("phy_APCalibrate_8814A() APK index %d tmpReg 0x%x delta_V %d delta_offset %d\n", index, tmpReg, (int)delta_V, (int)delta_offset));
+				PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() APK index %d tmpReg 0x%x delta_V %d delta_offset %d\n", index, tmpReg, (int)delta_V, (int)delta_offset);
 
 				if(BB_offset < 0)
 				{
@@ -927,17 +920,17 @@ VOID
 
 			ODM_SetRFReg(dm, path, RF_IPA_A, MASKDWORD, 0x8992e);
 #if !(DM_ODM_SUPPORT_TYPE & ODM_AP)
-			PHYDM_DBG(dm,DBG_CMN,  ("phy_APCalibrate_8814A() offset 0xc %x\n", PHY_QueryRFReg(padapter, path, RF_IPA_A, MASKDWORD)));
+			PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0xc %x\n", PHY_QueryRFReg(padapter, path, RF_IPA_A, MASKDWORD));
 			ODM_SetRFReg(dm, path, RF_AC, MASKDWORD, APK_RF_value_0[path][index]);
-			PHYDM_DBG(dm,DBG_CMN,   ("phy_APCalibrate_8814A() offset 0x0 %x\n", PHY_QueryRFReg(padapter, path, RF_AC, MASKDWORD)));
+			PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0x0 %x\n", PHY_QueryRFReg(padapter, path, RF_AC, MASKDWORD));
 			ODM_SetRFReg(dm, path, RF_TXBIAS_A, MASKDWORD, tmpReg);
-			PHYDM_DBG(dm,DBG_CMN,  ("phy_APCalibrate_8814A() offset 0xd %x\n", PHY_QueryRFReg(padapter, path, RF_TXBIAS_A, MASKDWORD)));
+			PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0xd %x\n", PHY_QueryRFReg(padapter, path, RF_TXBIAS_A, MASKDWORD));
 #else
-			PHYDM_DBG(dm,DBG_CMN,  ("phy_APCalibrate_8814A() offset 0xc %x\n", ODM_GetRFReg(dm, path, RF_IPA_A, MASKDWORD)));
+			PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0xc %x\n", ODM_GetRFReg(dm, path, RF_IPA_A, MASKDWORD));
 			ODM_SetRFReg(dm, path, RF_AC, MASKDWORD, APK_RF_value_0[path][index]);
-			PHYDM_DBG(dm,DBG_CMN,   ("phy_APCalibrate_8814A() offset 0x0 %x\n", ODM_GetRFReg(dm, path, RF_AC, MASKDWORD)));
+			PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0x0 %x\n", ODM_GetRFReg(dm, path, RF_AC, MASKDWORD));
 			ODM_SetRFReg(dm, path, RF_TXBIAS_A, MASKDWORD, tmpReg);
-			PHYDM_DBG(dm,DBG_CMN,  ("phy_APCalibrate_8814A() offset 0xd %x\n", ODM_GetRFReg(dm, path, RF_TXBIAS_A, MASKDWORD)));
+			PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0xd %x\n", ODM_GetRFReg(dm, path, RF_TXBIAS_A, MASKDWORD));
 #endif
 
 			// PA11+PAD01111, one shot
@@ -947,10 +940,10 @@ VOID
 				ODM_SetBBReg(dm, rFPGA0_IQK, MASKDWORD, 0x80000000);
 				{
 					ODM_SetBBReg(dm, APK_offset[path], MASKDWORD, APK_value[0]);
-					PHYDM_DBG(dm,DBG_CMN,  ("phy_APCalibrate_8814A() offset 0x%x value 0x%x\n", APK_offset[path], ODM_GetBBReg(dm, APK_offset[path], MASKDWORD)));
+					PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0x%x value 0x%x\n", APK_offset[path], ODM_GetBBReg(dm, APK_offset[path], MASKDWORD));
 					ODM_delay_ms(3);
 					ODM_SetBBReg(dm, APK_offset[path], MASKDWORD, APK_value[1]);
-					PHYDM_DBG(dm,DBG_CMN,  ("phy_APCalibrate_8814A() offset 0x%x value 0x%x\n", APK_offset[path], ODM_GetBBReg(dm, APK_offset[path], MASKDWORD)));
+					PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0x%x value 0x%x\n", APK_offset[path], ODM_GetBBReg(dm, APK_offset[path], MASKDWORD));
 
 					ODM_delay_ms(20);
 				}
@@ -960,7 +953,7 @@ VOID
 					tmpReg = ODM_GetBBReg(dm, rAPK, 0x03E00000);
 				else
 					tmpReg = ODM_GetBBReg(dm, rAPK, 0xF8000000);
-				PHYDM_DBG(dm,DBG_CMN,  ("phy_APCalibrate_8814A() offset 0xbd8[25:21] %x\n", tmpReg));
+				PHYDM_DBG(dm,DBG_CMN,"phy_APCalibrate_8814A() offset 0xbd8[25:21] %x\n", tmpReg);
 
 
 				i++;
@@ -1007,10 +1000,10 @@ VOID
 		//note no index == 0
 		if (APK_result[path][1] > 6)
 			APK_result[path][1] = 6;
-		PHYDM_DBG(dm,DBG_CMN,  ("apk path %d result %d 0x%x \t", path, 1, APK_result[path][1]));
+		PHYDM_DBG(dm,DBG_CMN,"apk path %d result %d 0x%x \t", path, 1, APK_result[path][1]);
 	}
 
-	PHYDM_DBG(dm,DBG_CMN,   ("\n"));
+	PHYDM_DBG(dm,DBG_CMN,"\n");
 
 
 	for(path = 0; path < pathbound; path++)
@@ -1031,7 +1024,7 @@ VOID
 
 	dm->RFCalibrateInfo.bAPKdone = true;
 
-	PHYDM_DBG(dm,DBG_CMN,  ("<==phy_APCalibrate_8814A()\n"));
+	PHYDM_DBG(dm,DBG_CMN,"<==phy_APCalibrate_8814A()\n");
 }
 
 
@@ -1044,9 +1037,9 @@ PHY_LCCalibrate_8814A(
 		IN PDM_ODM_T		dm
 		)
 {
-	PHYDM_DBG(dm, DBG_CMN,  ("===> PHY_LCCalibrate_8814A\n"));
+	PHYDM_DBG(dm, DBG_CMN,"===> PHY_LCCalibrate_8814A\n");
 	phy_LCCalibrate_8814A(dm, true);
-	PHYDM_DBG(dm, DBG_CMN,  ("<=== PHY_LCCalibrate_8814A\n"));
+	PHYDM_DBG(dm, DBG_CMN,"<=== PHY_LCCalibrate_8814A\n");
 }
 
 VOID
@@ -1259,9 +1252,9 @@ VOID
 	u1Byte			RetryCount = 0;
 
 
-	PHYDM_DBG(dm,DBG_CMN,  ("==>phy_DigitalPredistortion_8814A()\n"));
+	PHYDM_DBG(dm,DBG_CMN,"==>phy_DigitalPredistortion_8814A()\n");
 
-	PHYDM_DBG(dm,DBG_CMN,  ("phy_DigitalPredistortion_8814A for %s %s\n", (is2T ? "2T2R" : "1T1R")));
+	PHYDM_DBG(dm,DBG_CMN,"phy_DigitalPredistortion_8814A for %s %s\n", (is2T ? "2T2R" : "1T1R"));
 
 	//save BB default value
 	for(index=0; index<DP_BB_REG_NUM; index++)
@@ -1409,11 +1402,11 @@ VOID
 			ODM_SetBBReg(dm, rConfig_Pmpd_AntA, MASKDWORD, 0x000477c0);
 			ODM_delay_ms(50);
 			RetryCount++;
-			PHYDM_DBG(dm,DBG_CMN,  ("path A DPK RetryCount %d 0xbe0[31:16] %x 0xbe8[31:16] %x\n", RetryCount, tmpReg, tmpReg2));
+			PHYDM_DBG(dm,DBG_CMN,"path A DPK RetryCount %d 0xbe0[31:16] %x 0xbe8[31:16] %x\n", RetryCount, tmpReg, tmpReg2);
 		}
 		else
 		{
-			PHYDM_DBG(dm,DBG_CMN,  ("path A DPK Sucess\n"));
+			PHYDM_DBG(dm,DBG_CMN,"path A DPK Sucess\n");
 			dm->RFCalibrateInfo.bDPPathAOK = true;
 			break;
 		}
@@ -1433,7 +1426,7 @@ VOID
 		for(i=rPdp_AntA; i<=0xb3c; i+=4)
 		{
 			ODM_SetBBReg(dm, i, MASKDWORD, 0x40004000);
-			PHYDM_DBG(dm,DBG_CMN,  ("path A ofsset = 0x%x\n", i));
+			PHYDM_DBG(dm,DBG_CMN,"path A ofsset = 0x%x\n", i);
 		}
 
 		//pwsf
@@ -1548,11 +1541,11 @@ VOID
 				ODM_SetBBReg(dm, rConfig_Pmpd_AntB, MASKDWORD, 0x000477c0);
 				ODM_delay_ms(50);
 				RetryCount++;
-				PHYDM_DBG(dm,DBG_CMN,   ("path B DPK RetryCount %d 0xbf0[31:16] %x, 0xbf8[31:16] %x\n", RetryCount , tmpReg, tmpReg2));
+				PHYDM_DBG(dm,DBG_CMN,"path B DPK RetryCount %d 0xbf0[31:16] %x, 0xbf8[31:16] %x\n", RetryCount , tmpReg, tmpReg2);
 			}
 			else
 			{
-				PHYDM_DBG(dm,DBG_CMN,  ("path B DPK Success\n"));
+				PHYDM_DBG(dm,DBG_CMN,"path B DPK Success\n");
 				dm->RFCalibrateInfo.bDPPathBOK = true;
 				break;
 			}
@@ -1572,7 +1565,7 @@ VOID
 			for(i=0xb60; i<=0xb9c; i+=4)
 			{
 				ODM_SetBBReg(dm, i, MASKDWORD, 0x40004000);
-				PHYDM_DBG(dm,DBG_CMN,  ("path B ofsset = 0x%x\n", i));
+				PHYDM_DBG(dm,DBG_CMN,"path B ofsset = 0x%x\n", i);
 			}
 
 			// PWSF
@@ -1625,7 +1618,7 @@ VOID
 #endif
 
 	dm->RFCalibrateInfo.bDPdone = true;
-	PHYDM_DBG(dm,DBG_CMN,  ("<==phy_DigitalPredistortion_8814A()\n"));
+	PHYDM_DBG(dm,DBG_CMN,"<==phy_DigitalPredistortion_8814A()\n");
 #endif
 }
 

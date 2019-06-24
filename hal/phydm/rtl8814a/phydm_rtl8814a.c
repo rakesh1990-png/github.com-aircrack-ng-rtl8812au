@@ -118,10 +118,10 @@ odm_DynamicPrimaryCCAMP_8814A(
 	OFDM_FA = FalseAlmCnt->Cnt_Ofdm_fail;
 	BW_USC_Cnt = FalseAlmCnt->Cnt_BW_USC;
 	BW_LSC_Cnt = FalseAlmCnt->Cnt_BW_LSC;
-	PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,  ("8814A: OFDM CCA=%d\n", OFDM_CCA));
-	PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,  ("8814A: OFDM FA=%d\n", OFDM_FA));
-	PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,  ("8814A: BW_USC=%d\n", BW_USC_Cnt));
-	PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,  ("8814A: BW_LSC=%d\n", BW_LSC_Cnt));
+	PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,"8814A: OFDM CCA=%d\n", OFDM_CCA);
+	PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,"8814A: OFDM FA=%d\n", OFDM_FA);
+	PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,"8814A: BW_USC=%d\n", BW_USC_Cnt);
+	PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,"8814A: BW_LSC=%d\n", BW_LSC_Cnt);
        Is40MHz = *(dm->pBandWidth);
 	SecCHOffset = *(dm->pSecChOffset);		// NIC: 2: sec is below,  1: sec is above
 	//DbgPrint("8814A: SecCHOffset = %d\n", SecCHOffset);
@@ -131,11 +131,11 @@ odm_DynamicPrimaryCCAMP_8814A(
 	else{
 
 		if(Is40MHz){
-			PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,  ("8814A: Cont Down= %d\n", CountDown));
-			PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,  ("8814A: Primary_CCA_flag=%d\n", PrimaryCCA->PriCCA_flag));
-			PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,  ("8814A: Intf_Type=%d\n", PrimaryCCA->intf_type));
-			PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,  ("8814A: Intf_flag=%d\n", PrimaryCCA->intf_flag ));
-			PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,  ("8814A: Duplicate RTS Flag=%d\n", PrimaryCCA->DupRTS_flag));
+			PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,"8814A: Cont Down= %d\n", CountDown);
+			PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,"8814A: Primary_CCA_flag=%d\n", PrimaryCCA->PriCCA_flag);
+			PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,"8814A: Intf_Type=%d\n", PrimaryCCA->intf_type);
+			PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,"8814A: Intf_flag=%d\n", PrimaryCCA->intf_flag );
+			PHYDM_DBG(dm,ODM_COMP_DYNAMIC_PRICCA,"8814A: Duplicate RTS Flag=%d\n", PrimaryCCA->DupRTS_flag);
 			//DbgPrint("8814A RTS_EN=%d\n", hal_data->RTSEN);
 
 			if(PrimaryCCA->PriCCA_flag == 0){
@@ -435,7 +435,7 @@ phydm_spur_nbi_setting_8814a(
 		else
 			set_result = phydm_nbi_setting(dm,	FUNC_ENABLE, *dm->channel, 40, 2440, PHYDM_DONT_CARE);
 	}
-	PHYDM_DBG(dm, DBG_CMN,  ("%s, set_result = 0x%d, pChannel = %d\n", __func__, set_result, *dm->channel));
+	PHYDM_DBG(dm, DBG_CMN,"%s, set_result = 0x%d, pChannel = %d\n", __func__, set_result, *dm->channel);
 	//printk("%s, set_result = 0x%d, pChannel = %d\n", __func__, set_result, *dm->channel);
 	dm->nbi_set_result = set_result;
 	return set_result;
@@ -473,8 +473,7 @@ void phydm_dynamic_ant_weighting_8814a(void *dm_void)
 
 			/*equal weighting*/
 			reg_8 = (u8)odm_get_bb_reg(dm, R_0xf94, BIT(0) | BIT(1) | BIT(2));
-			PHYDM_DBG(dm, ODM_COMP_API,
-				  "Equal weighting ,rssi_min = %d\n, 0xf94[2:0] = 0x%x\n",
+			PHYDM_DBG(dm, ODM_COMP_API,				  "Equal weighting ,rssi_min = %d\n, 0xf94[2:0] = 0x%x\n",
 				  dm->rssi_min, reg_8);
 		} else if (dm->rssi_min <= rssi_h2l) {
 			odm_set_bb_reg(dm, R_0x854, BIT(3), 0x1);
@@ -482,8 +481,7 @@ void phydm_dynamic_ant_weighting_8814a(void *dm_void)
 
 			/*fix sec_min_wgt = 1/2*/
 			reg_8 = (u8)odm_get_bb_reg(dm, R_0xf94, BIT(0) | BIT(1) | BIT(2));
-			PHYDM_DBG(dm, ODM_COMP_API,
-				  "AGC weighting ,rssi_min = %d\n, 0xf94[2:0] = 0x%x\n",
+			PHYDM_DBG(dm, ODM_COMP_API,				  "AGC weighting ,rssi_min = %d\n, 0xf94[2:0] = 0x%x\n",
 				  dm->rssi_min, reg_8);
 		}
 	} else {
@@ -491,8 +489,7 @@ void phydm_dynamic_ant_weighting_8814a(void *dm_void)
 		odm_set_bb_reg(dm, R_0x850, BIT(21) | BIT(22), 0x1);
 
 		reg_8 = (u8)odm_get_bb_reg(dm, R_0xf94, BIT(0) | BIT(1) | BIT(2));
-		PHYDM_DBG(dm, ODM_COMP_API,
-			  "AGC weighting ,rssi_min = %d\n, 0xf94[2:0] = 0x%x\n",
+		PHYDM_DBG(dm, ODM_COMP_API,			  "AGC weighting ,rssi_min = %d\n, 0xf94[2:0] = 0x%x\n",
 			  dm->rssi_min, reg_8);
 		/*fix sec_min_wgt = 1/2*/
 	}

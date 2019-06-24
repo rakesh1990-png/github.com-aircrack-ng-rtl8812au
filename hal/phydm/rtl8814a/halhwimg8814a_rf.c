@@ -53,15 +53,11 @@ u4Byte    driver3 = 0;
 				(dm->type_alna & 0xFF00) << 8 |
 				(dm->type_apa & 0xFF00)  << 16;
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  
-	("===> check_positive (cond1, cond2, cond3, cond4) = (0x%X 0x%X 0x%X 0x%X)\n", cond1, cond2, cond3, cond4));
-	PHYDM_DBG(dm, ODM_COMP_INIT,  
-	("===> check_positive (driver1, driver2, driver3, driver4) = (0x%X 0x%X 0x%X 0x%X)\n", driver1, driver2, driver3, driver4));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> check_positive (cond1, cond2, cond3, cond4) = (0x%X 0x%X 0x%X 0x%X)\n", cond1, cond2, cond3, cond4);
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> check_positive (driver1, driver2, driver3, driver4) = (0x%X 0x%X 0x%X 0x%X)\n", driver1, driver2, driver3, driver4);
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  
-	("	(Platform, Interface) = (0x%X, 0x%X)\n", dm->support_platform, dm->support_interface));
-	PHYDM_DBG(dm, ODM_COMP_INIT,  
-	("	(Board, Package) = (0x%X, 0x%X)\n", dm->board_type, dm->package_type));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"	(Platform, Interface) = (0x%X, 0x%X)\n", dm->support_platform, dm->support_interface);
+	PHYDM_DBG(dm, ODM_COMP_INIT,"	(Board, Package) = (0x%X, 0x%X)\n", dm->board_type, dm->package_type);
 
 
 	/*============== Value Defined Check ===============*/
@@ -1198,7 +1194,7 @@ odm_read_and_config_mp_8814a_radioa(
 	
 	u4Byte	v1 = 0, v2 = 0, pre_v1 = 0, pre_v2 = 0;
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  ("===> ODM_ReadAndConfig_MP_8814A_RadioA\n"));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> ODM_ReadAndConfig_MP_8814A_RadioA\n");
 
 	while ((i + 1) < array_len) {
 		v1 = array[i];
@@ -1210,14 +1206,14 @@ odm_read_and_config_mp_8814a_radioa(
 				if (c_cond == COND_ENDIF) {/*end*/
 					is_matched = true;
 					is_skipped = false;
-					PHYDM_DBG(dm, ODM_COMP_INIT,  ("ENDIF\n"));
+					PHYDM_DBG(dm, ODM_COMP_INIT,"ENDIF\n");
 				} else if (c_cond == COND_ELSE) { /*else*/
 					is_matched = is_skipped?false:true;
-					PHYDM_DBG(dm, ODM_COMP_INIT,  ("ELSE\n"));
+					PHYDM_DBG(dm, ODM_COMP_INIT,"ELSE\n");
 				} else {/*if , else if*/
 					pre_v1 = v1;
 					pre_v2 = v2;
-					PHYDM_DBG(dm, ODM_COMP_INIT,  ("IF or ELSE IF\n"));
+					PHYDM_DBG(dm, ODM_COMP_INIT,"IF or ELSE IF\n");
 				}
 			} else if (v1 & BIT(30)) { /*negative condition*/
 				if (is_skipped == false) {
@@ -2241,7 +2237,7 @@ odm_read_and_config_mp_8814a_radiob(
 	
 	u4Byte	v1 = 0, v2 = 0, pre_v1 = 0, pre_v2 = 0;
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  ("===> ODM_ReadAndConfig_MP_8814A_RadioB\n"));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> ODM_ReadAndConfig_MP_8814A_RadioB\n");
 
 	while ((i + 1) < array_len) {
 		v1 = array[i];
@@ -2253,14 +2249,14 @@ odm_read_and_config_mp_8814a_radiob(
 				if (c_cond == COND_ENDIF) {/*end*/
 					is_matched = true;
 					is_skipped = false;
-					PHYDM_DBG(dm, ODM_COMP_INIT,  ("ENDIF\n"));
+					PHYDM_DBG(dm, ODM_COMP_INIT,"ENDIF\n");
 				} else if (c_cond == COND_ELSE) { /*else*/
 					is_matched = is_skipped?false:true;
-					PHYDM_DBG(dm, ODM_COMP_INIT,  ("ELSE\n"));
+					PHYDM_DBG(dm, ODM_COMP_INIT,"ELSE\n");
 				} else {/*if , else if*/
 					pre_v1 = v1;
 					pre_v2 = v2;
-					PHYDM_DBG(dm, ODM_COMP_INIT,  ("IF or ELSE IF\n"));
+					PHYDM_DBG(dm, ODM_COMP_INIT,"IF or ELSE IF\n");
 				}
 			} else if (v1 & BIT(30)) { /*negative condition*/
 				if (is_skipped == false) {
@@ -3287,7 +3283,7 @@ odm_read_and_config_mp_8814a_radioc(
 	
 	u4Byte	v1 = 0, v2 = 0, pre_v1 = 0, pre_v2 = 0;
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  ("===> ODM_ReadAndConfig_MP_8814A_RadioC\n"));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> ODM_ReadAndConfig_MP_8814A_RadioC\n");
 
 	while ((i + 1) < array_len) {
 		v1 = array[i];
@@ -3299,14 +3295,14 @@ odm_read_and_config_mp_8814a_radioc(
 				if (c_cond == COND_ENDIF) {/*end*/
 					is_matched = true;
 					is_skipped = false;
-					PHYDM_DBG(dm, ODM_COMP_INIT,  ("ENDIF\n"));
+					PHYDM_DBG(dm, ODM_COMP_INIT,"ENDIF\n");
 				} else if (c_cond == COND_ELSE) { /*else*/
 					is_matched = is_skipped?false:true;
-					PHYDM_DBG(dm, ODM_COMP_INIT,  ("ELSE\n"));
+					PHYDM_DBG(dm, ODM_COMP_INIT,"ELSE\n");
 				} else {/*if , else if*/
 					pre_v1 = v1;
 					pre_v2 = v2;
-					PHYDM_DBG(dm, ODM_COMP_INIT,  ("IF or ELSE IF\n"));
+					PHYDM_DBG(dm, ODM_COMP_INIT,"IF or ELSE IF\n");
 				}
 			} else if (v1 & BIT(30)) { /*negative condition*/
 				if (is_skipped == false) {
@@ -4335,7 +4331,7 @@ odm_read_and_config_mp_8814a_radiod(
 	
 	u4Byte	v1 = 0, v2 = 0, pre_v1 = 0, pre_v2 = 0;
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  ("===> ODM_ReadAndConfig_MP_8814A_RadioD\n"));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> ODM_ReadAndConfig_MP_8814A_RadioD\n");
 
 	while ((i + 1) < array_len) {
 		v1 = array[i];
@@ -4347,14 +4343,14 @@ odm_read_and_config_mp_8814a_radiod(
 				if (c_cond == COND_ENDIF) {/*end*/
 					is_matched = true;
 					is_skipped = false;
-					PHYDM_DBG(dm, ODM_COMP_INIT,  ("ENDIF\n"));
+					PHYDM_DBG(dm, ODM_COMP_INIT,"ENDIF\n");
 				} else if (c_cond == COND_ELSE) { /*else*/
 					is_matched = is_skipped?false:true;
-					PHYDM_DBG(dm, ODM_COMP_INIT,  ("ELSE\n"));
+					PHYDM_DBG(dm, ODM_COMP_INIT,"ELSE\n");
 				} else {/*if , else if*/
 					pre_v1 = v1;
 					pre_v2 = v2;
-					PHYDM_DBG(dm, ODM_COMP_INIT,  ("IF or ELSE IF\n"));
+					PHYDM_DBG(dm, ODM_COMP_INIT,"IF or ELSE IF\n");
 				}
 			} else if (v1 & BIT(30)) { /*negative condition*/
 				if (is_skipped == false) {
@@ -4450,7 +4446,7 @@ odm_read_and_config_mp_8814a_txpowertrack(
 {
 	struct dm_rf_calibration_struct  *  cali_info = &(dm->rf_calibrate_info);
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  ("===> ODM_ReadAndConfig_MP_MP_8814A\n"));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> ODM_ReadAndConfig_MP_MP_8814A\n");
 
 
 	odm_move_memory(dm, cali_info->delta_swing_table_idx_2ga_p, g_delta_swing_table_idx_mp_2ga_p_txpowertrack_8814a, DELTA_SWINGIDX_SIZE);
@@ -4549,7 +4545,7 @@ odm_read_and_config_mp_8814a_txpowertrack_type0(
 {
 	struct dm_rf_calibration_struct  *  cali_info = &(dm->rf_calibrate_info);
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  ("===> ODM_ReadAndConfig_MP_MP_8814A\n"));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> ODM_ReadAndConfig_MP_MP_8814A\n");
 
 
 	odm_move_memory(dm, cali_info->delta_swing_table_idx_2ga_p, g_delta_swing_table_idx_mp_2ga_p_txpowertrack_type0_8814a, DELTA_SWINGIDX_SIZE);
@@ -4648,7 +4644,7 @@ odm_read_and_config_mp_8814a_txpowertrack_type2(
 {
 	struct dm_rf_calibration_struct  *  cali_info = &(dm->rf_calibrate_info);
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  ("===> ODM_ReadAndConfig_MP_MP_8814A\n"));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> ODM_ReadAndConfig_MP_MP_8814A\n");
 
 
 	odm_move_memory(dm, cali_info->delta_swing_table_idx_2ga_p, g_delta_swing_table_idx_mp_2ga_p_txpowertrack_type2_8814a, DELTA_SWINGIDX_SIZE);
@@ -4747,7 +4743,7 @@ odm_read_and_config_mp_8814a_txpowertrack_type5(
 {
 	struct dm_rf_calibration_struct  *  cali_info = &(dm->rf_calibrate_info);
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  ("===> ODM_ReadAndConfig_MP_MP_8814A\n"));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> ODM_ReadAndConfig_MP_MP_8814A\n");
 
 
 	odm_move_memory(dm, cali_info->delta_swing_table_idx_2ga_p, g_delta_swing_table_idx_mp_2ga_p_txpowertrack_type5_8814a, DELTA_SWINGIDX_SIZE);
@@ -5774,7 +5770,7 @@ odm_read_and_config_mp_8814a_txpwr_lmt(
 	hal_data->nLinesReadPwrLmt = array_len/7;
 #endif
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  ("===> ODM_ReadAndConfig_MP_8814A_TXPWR_LMT\n"));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> ODM_ReadAndConfig_MP_8814A_TXPWR_LMT\n");
 
 	for (i = 0; i < array_len; i += 7) {
 		pu1Byte regulation = array[i];
@@ -6790,7 +6786,7 @@ odm_read_and_config_mp_8814a_txpwr_lmt_type2(
 	hal_data->nLinesReadPwrLmt = array_len/7;
 #endif
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  ("===> ODM_ReadAndConfig_MP_8814A_TXPWR_LMT_type2\n"));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> ODM_ReadAndConfig_MP_8814A_TXPWR_LMT_type2\n");
 
 	for (i = 0; i < array_len; i += 7) {
 		pu1Byte regulation = array[i];
@@ -7806,7 +7802,7 @@ odm_read_and_config_mp_8814a_txpwr_lmt_type3(
 	hal_data->nLinesReadPwrLmt = array_len/7;
 #endif
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  ("===> ODM_ReadAndConfig_MP_8814A_TXPWR_LMT_Type3\n"));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> ODM_ReadAndConfig_MP_8814A_TXPWR_LMT_Type3\n");
 
 	for (i = 0; i < array_len; i += 7) {
 		pu1Byte regulation = array[i];
@@ -8822,7 +8818,7 @@ odm_read_and_config_mp_8814a_txpwr_lmt_type5(
 	hal_data->nLinesReadPwrLmt = array_len/7;
 #endif
 
-	PHYDM_DBG(dm, ODM_COMP_INIT,  ("===> ODM_ReadAndConfig_MP_8814A_TXPWR_LMT_Type5\n"));
+	PHYDM_DBG(dm, ODM_COMP_INIT,"===> ODM_ReadAndConfig_MP_8814A_TXPWR_LMT_Type5\n");
 
 	for (i = 0; i < array_len; i += 7) {
 		pu1Byte regulation = array[i];
