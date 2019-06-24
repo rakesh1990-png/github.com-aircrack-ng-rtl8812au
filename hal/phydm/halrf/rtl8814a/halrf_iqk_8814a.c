@@ -304,7 +304,7 @@ _LOK_One_Shot(
 
 	}
 	PHYDM_DBG(dm, DBG_CMN,"LOK0_notready = %d, LOK1_notready = %d, LOK2_notready = %d, LOK3_notready = %d\n",
-		pIQK_info->lok_fail[0], pIQK_info->lok_fail[1], pIQK_info->lok_fail[2], pIQK_info->lok_fail[3]));
+		pIQK_info->lok_fail[0], pIQK_info->lok_fail[1], pIQK_info->lok_fail[2], pIQK_info->lok_fail[3]);
 }
 
 VOID
@@ -412,7 +412,7 @@ _IQK_One_Shot(
 
 		}
 		PHYDM_DBG(dm, DBG_CMN,"IQK0_fail = %d, IQK1_fail = %d, IQK2_fail = %d, IQK3_fail = %d\n",
-			pIQK_info->iqk_fail[idx][0], pIQK_info->iqk_fail[idx][1], pIQK_info->iqk_fail[idx][2], pIQK_info->iqk_fail[idx][3]));
+			pIQK_info->iqk_fail[idx][0], pIQK_info->iqk_fail[idx][1], pIQK_info->iqk_fail[idx][2], pIQK_info->iqk_fail[idx][3]);
 	}
 }
 
@@ -422,8 +422,8 @@ _IQK_Tx_8814A(
 	IN u8 chnlIdx
 	)
 {
-	PHYDM_DBG(dm, DBG_CMN,"BandWidth = %d, ExtPA2G = %d\n", *dm->p_band_width, dm->ext_pa);
-	PHYDM_DBG(dm, DBG_CMN,"Interface = %d, pBandType = %d\n", dm->support_interface, *dm->p_band_type);
+	PHYDM_DBG(dm, DBG_CMN,"BandWidth = %d, ExtPA2G = %d\n", *dm->band_width, dm->ext_pa);
+	PHYDM_DBG(dm, DBG_CMN,"Interface = %d, pBandType = %d\n", dm->support_interface, *dm->band_type);
 	PHYDM_DBG(dm, DBG_CMN,"CutVersion = %x\n", dm->cut_version);
 
 	odm_set_rf_reg(dm, RF_PATH_A, 0x58, BIT(19), 0x1);
