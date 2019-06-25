@@ -132,7 +132,7 @@ phy_get_tx_power_index_8814a(
 );
 
 u8
-PHY_GetTxPowerIndex8814A(
+PHY_GetTxPowerIndex_8814A(
 	IN	PADAPTER		Adapter,
 	IN	enum rf_path		RFPath,
 	IN	u8				Rate,

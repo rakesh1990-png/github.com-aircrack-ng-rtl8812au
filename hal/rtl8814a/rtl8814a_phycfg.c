@@ -1170,7 +1170,7 @@ PHY_SetTxPowerLevel8814(
  *                                                                                    <20120830, Kordan>
  **************************************************************************************************************/
 u8
-PHY_GetTxPowerIndex8814A(
+PHY_GetTxPowerIndex_8814A(
 	IN	PADAPTER		pAdapter,
 	IN	enum rf_path		RFPath,
 	IN	u8			Rate,

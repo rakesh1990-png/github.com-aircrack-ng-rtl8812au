@@ -5415,7 +5415,9 @@ void rtl8814_set_hal_ops(struct hal_ops *pHalFunc)
 
 	pHalFunc->set_tx_power_level_handler = &PHY_SetTxPowerLevel8814;
 	pHalFunc->get_tx_power_level_handler = &PHY_GetTxPowerLevel8814;
-	pHalFunc->get_tx_power_index_handler = &PHY_GetTxPowerIndex8814A;
+
+	pHalFunc->set_tx_power_index_handler = &PHY_SetTxPowerIndex_8814A;
+	pHalFunc->get_tx_power_index_handler = &PHY_GetTxPowerIndex_8814A;
 
 	pHalFunc->hal_dm_watchdog = &rtl8814_HalDmWatchDog;
 
