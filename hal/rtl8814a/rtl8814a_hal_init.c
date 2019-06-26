@@ -4338,11 +4338,6 @@ u8 SetHwReg8814A(PADAPTER padapter, u8 variable, u8 *pval)
 			rtw_write8(padapter, REG_TXPAUSE, *pval);
 			break;
 
-		case HW_VAR_BCN_FUNC:
-			// hw_var_set_bcn_func(padapter, variable, pval);
-			RTW_INFO("HW_VAR_BCN_FUNC: This shouldn't happenz");
-			break;
-
 		case HW_VAR_CORRECT_TSF:
 			RTW_INFO("HW_VAR_CORRECT_TSF: We might want to look at thiz");
 /* #ifdef CONFIG_CONCURRENT_MODE */
@@ -4382,32 +4377,6 @@ u8 SetHwReg8814A(PADAPTER padapter, u8 variable, u8 *pval)
 /* 				} */
 /* 			} */
 /* #endif //CONFIG_CONCURRENT_MODE */
-			break;
-
-		case HW_VAR_MLME_DISCONNECT:
-			RTW_INFO("HW_VAR_MLME_DISCONNECT: We might want to look at thiz");
-/* #ifdef CONFIG_CONCURRENT_MODE */
-/* 			hw_var_set_mlme_disconnect(padapter, variable, pval); */
-/* #else */
-/* 			{ */
-/* 				// Set RCR to not to receive data frame when NO LINK state */
-/* //				val32 = rtw_read32(padapter, REG_RCR); */
-/* //				val32 &= ~RCR_ADF; */
-/* //				rtw_write32(padapter, REG_RCR, val32); */
-
-/* 				// reject all data frames */
-/* 				rtw_write16(padapter, REG_RXFLTMAP2, 0x00); */
-
-/* 				// reset TSF */
-/* 				val8 = BIT(0) | BIT(1); */
-/* 				rtw_write8(padapter, REG_DUAL_TSF_RST, val8); */
-
-/* 				// disable update TSF */
-/* 				val8 = rtw_read8(padapter, REG_BCN_CTRL); */
-/* 				val8 |= BIT(4); */
-/* 				rtw_write8(padapter, REG_BCN_CTRL, val8); */
-/* 			} */
-/* #endif */
 			break;
 
 		case HW_VAR_MLME_SITESURVEY:
@@ -4484,30 +4453,6 @@ u8 SetHwReg8814A(PADAPTER padapter, u8 variable, u8 *pval)
 				}
 			}
 #endif
-			break;
-
-
-		case HW_VAR_BEACON_INTERVAL:
-			RTW_INFO("HW_VAR_BEACON_INTERVAL: We might want to look at thiz");
-
-/* 			rtw_write16(padapter, REG_BCN_INTERVAL, *(u16*)pval); */
-/* #ifdef CONFIG_INTERRUPT_BASED_TXBCN_EARLY_INT */
-/* 			{ */
-/* 				struct mlme_ext_priv *pmlmeext; */
-/* 				struct mlme_ext_info *pmlmeinfo; */
-/* 				u16 bcn_interval; */
-
-/* 				pmlmeext = &padapter->mlmeextpriv; */
-/* 				pmlmeinfo = &pmlmeext->mlmext_info; */
-/* 				bcn_interval = *((u16*)pval); */
-
-/* 				if ((pmlmeinfo->state&0x03) == WIFI_FW_AP_STATE) */
-/* 				{ */
-/* 					RTW_INFO("%s==> bcn_interval:%d, eraly_int:%d\n", __FUNCTION__, bcn_interval, bcn_interval>>1); */
-/* 					rtw_write8(padapter, REG_DRVERLYINT, bcn_interval>>1);// 50ms for sdio */
-/* 				} */
-/* 			} */
-/* #endif // CONFIG_INTERRUPT_BASED_TXBCN_EARLY_INT */
 			break;
 
 		case HW_VAR_SLOT_TIME:
@@ -4984,6 +4929,7 @@ u8 SetHwReg8814A(PADAPTER padapter, u8 variable, u8 *pval)
 			break;
 #endif
 		default:
+
 			ret = SetHwReg(padapter, variable, pval);
 			break;
 	}
