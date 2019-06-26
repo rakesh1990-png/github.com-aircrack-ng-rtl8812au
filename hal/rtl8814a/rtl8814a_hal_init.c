@@ -612,6 +612,221 @@ extern char *rtw_fw_mp_bt_file_path;
 u8 FwBuffer[FW_SIZE];
 #endif //CONFIG_FILE_FWIMG
 
+// PECastro, Stolen from hal/rtl8812a/rtl8812a_hal_init.c v5.3.4
+void SetBcnCtrlReg(
+	PADAPTER	padapter,
+	u8		SetBits,
+	u8		ClearBits)
+{
+	PHAL_DATA_TYPE pHalData;
+	u8 RegBcnCtrlVal = 0;
+
+	pHalData = GET_HAL_DATA(padapter);
+	RegBcnCtrlVal = rtw_read8(padapter, REG_BCN_CTRL);
+
+	RegBcnCtrlVal |= SetBits;
+	RegBcnCtrlVal &= ~ClearBits;
+
+#if 0
+	/* #ifdef CONFIG_SDIO_HCI */
+	if (pHalData->sdio_himr & (SDIO_HIMR_TXBCNOK_MSK | SDIO_HIMR_TXBCNERR_MSK))
+		RegBcnCtrlVal |= EN_TXBCN_RPT;
+#endif
+	rtw_write8(padapter, REG_BCN_CTRL, RegBcnCtrlVal);
+}
+
+
+VOID
+HalROMDownloadFWRSVDPage8814A(
+	IN	PADAPTER			Adapter,
+	IN	PVOID				buffer,
+	IN	u32				Len
+)
+{
+	u8	u1bTmp=0, tmpReg422=0;
+	u8	BcnValidReg=0,TxBcReg=0;
+	BOOLEAN	bSendBeacon=_FALSE, bDownLoadRSVDPageOK = _FALSE;
+	u8*  pbuffer = buffer;
+
+	BOOLEAN fs = _TRUE, ls = _FALSE;
+	u8	FWHeaderSize = 64, PageSize = 128 ;
+	u16 RsvdPageNum = 0;
+	u32 dmem_pkt_size = 0, iram_pkt_size = 0 ,MaxRsvdPageBufSize = 0;
+	u32 last_block_size = 0, filesize_ram_block = 0, pkt_offset = 0;
+	u32 txpktbuf_bndy = 0;
+	u32	BeaconHeaderInTxPacketBuf = 0, MEMOffsetInTxPacketBuf  = 0;
+
+	//Set REG_CR bit 8. DMA beacon by SW.
+	u1bTmp = rtw_read8(Adapter, REG_CR_8814A+1);
+	rtw_write8(Adapter,  REG_CR_8814A+1, (u1bTmp|BIT0));
+	/*RTW_INFO("%s-%d: enable SW BCN, REG_CR=0x%x\n", __func__, __LINE__, rtw_read32(Adapter, REG_CR));*/
+
+	// Disable Hw protection for a time which revserd for Hw sending beacon.
+	// Fix download reserved page packet fail that access collision with the protection time.
+	// 2010.05.11. Added by tynli.
+	SetBcnCtrlReg(Adapter, 0, BIT3);
+	SetBcnCtrlReg(Adapter, BIT4, 0);
+
+	// Set FWHW_TXQ_CTRL 0x422[6]=0 to tell Hw the packet is not a real beacon frame.
+	tmpReg422 = rtw_read8(Adapter, REG_FWHW_TXQ_CTRL_8814A+2);
+	rtw_write8(Adapter, REG_FWHW_TXQ_CTRL_8814A+2,  tmpReg422&(~BIT6));
+
+	if(tmpReg422&BIT6)
+	{
+		RTW_INFO("HalROMDownloadFWRSVDPage8814A(): There is an Adapter is sending beacon.\n");
+		bSendBeacon = _TRUE;
+	}
+
+	//Set The head page of packet of Bcnq
+	rtw_hal_get_def_var(Adapter, HAL_DEF_TX_PAGE_BOUNDARY, (u16*)&txpktbuf_bndy);
+	rtw_write16(Adapter,REG_FIFOPAGE_CTRL_2_8814A, txpktbuf_bndy);
+
+	/* RTW_INFO("HalROMDownloadFWRSVDPage8814A: txpktbuf_bndy=%d\n", txpktbuf_bndy); */
+
+	// Clear beacon valid check bit.
+	BcnValidReg = rtw_read8(Adapter, REG_FIFOPAGE_CTRL_2_8814A+1);
+	rtw_write8(Adapter, REG_FIFOPAGE_CTRL_2_8814A+1, (BcnValidReg|BIT7));
+
+	// Return Beacon TCB.
+	//ReturnBeaconQueueTcb_8814A(Adapter);
+
+	dmem_pkt_size =  (u32)GET_FIRMWARE_HDR_TOTAL_DMEM_SZ_3081(pbuffer);
+	iram_pkt_size =  (u32)GET_FIRMWARE_HDR_IRAM_SZ_3081(pbuffer);
+	dmem_pkt_size += (u32)FW_CHKSUM_DUMMY_SZ;
+	iram_pkt_size += (u32)FW_CHKSUM_DUMMY_SZ;
+
+	if(dmem_pkt_size + iram_pkt_size + FWHeaderSize != Len)
+	{
+		RTW_INFO("ERROR: Fw Hdr size do not match the real fw size!!\n");
+		RTW_INFO("dmem_pkt_size = %d, iram_pkt_size = %d,FWHeaderSize = %d, Len = %d!!\n",dmem_pkt_size,iram_pkt_size,FWHeaderSize,Len);
+		return;
+	}
+	RTW_INFO("dmem_pkt_size = %d, iram_pkt_size = %d,FWHeaderSize = %d, Len = %d!!\n",dmem_pkt_size,iram_pkt_size,FWHeaderSize,Len);
+
+	// download rsvd page.
+	//RsvdPageNum = GetTxBufferRsvdPageNum8814A(Adapter, _FALSE);
+#ifdef CONFIG_BCN_IC
+	/* TODO: check tx buffer and DMA size */
+	MaxRsvdPageBufSize = MAX_CMDBUF_SZ-TXDESC_OFFSET;
+#else
+	MaxRsvdPageBufSize = MAX_XMIT_EXTBUF_SZ-TXDESC_OFFSET;//RsvdPageNum*PageSize - 40 -16 /*modified for usb*/;//TX_INFO_SIZE_8814AE;
+#endif
+	RTW_INFO("MaxRsvdPageBufSize %d,  Total len %d\n",MaxRsvdPageBufSize,Len);
+
+	BeaconHeaderInTxPacketBuf = txpktbuf_bndy * PageSize;
+	MEMOffsetInTxPacketBuf = OCPBASE_TXBUF_3081 + BeaconHeaderInTxPacketBuf + 40;//TX_INFO_SIZE_8814AE;
+	//download DMEM
+	while(dmem_pkt_size > 0)
+	{
+		if(dmem_pkt_size > MaxRsvdPageBufSize)
+		{
+			filesize_ram_block = MaxRsvdPageBufSize;
+			ls = _FALSE;
+
+			last_block_size = dmem_pkt_size -MaxRsvdPageBufSize;
+			if(last_block_size < MaxRsvdPageBufSize)
+			{
+				if(((last_block_size + 40) & 0x3F)  == 0)	// Multiples of 64
+					filesize_ram_block -=4;
+			}
+		}
+		else
+		{
+			filesize_ram_block = dmem_pkt_size;
+			ls = _TRUE;
+		}
+		fs = (pkt_offset == 0 ? _TRUE: _FALSE);
+		// Return Beacon TCB.
+		//ReturnBeaconQueueTcb_8814A(Adapter);
+		//RTW_INFO("%d packet offset %d dmem_pkt_size %d\n", __LINE__,pkt_offset, dmem_pkt_size);
+		SetDownLoadFwRsvdPagePkt_8814A(Adapter, pbuffer+FWHeaderSize+pkt_offset, filesize_ram_block);
+		bDownLoadRSVDPageOK = WaitDownLoadRSVDPageOK_3081(Adapter);
+		if(!bDownLoadRSVDPageOK)
+		{
+			RTW_INFO("ERROR: DMEM  bDownLoadRSVDPageOK is false!!\n");
+			return;
+		}
+
+		IDDMADownLoadFW_3081(Adapter,MEMOffsetInTxPacketBuf,OCPBASE_DMEM_3081+pkt_offset,filesize_ram_block,fs,ls);
+		dmem_pkt_size -= filesize_ram_block;
+		pkt_offset += filesize_ram_block;
+	}
+
+	//download IRAM
+	pkt_offset = 0;
+	while(iram_pkt_size > 0)
+	{
+		if(iram_pkt_size > MaxRsvdPageBufSize)
+		{
+			filesize_ram_block = MaxRsvdPageBufSize;
+			ls = _FALSE;
+
+			last_block_size = iram_pkt_size -MaxRsvdPageBufSize;
+			if(last_block_size < MaxRsvdPageBufSize)
+			{
+				if(((last_block_size + 40) & 0x3F)  == 0)	// Multiples of 64
+					filesize_ram_block -=4;
+			}
+		}
+		else
+		{
+			filesize_ram_block = iram_pkt_size;
+			ls = _TRUE;
+		}
+
+		fs = (pkt_offset == 0 ? _TRUE: _FALSE);
+		// Return Beacon TCB.
+		//ReturnBeaconQueueTcb_8814A(Adapter);
+		//RTW_INFO("%d packet offset %d iram_pkt_size %d\n", __LINE__,pkt_offset, iram_pkt_size);
+		SetDownLoadFwRsvdPagePkt_8814A(Adapter, pbuffer+Len-iram_pkt_size, filesize_ram_block);
+
+		bDownLoadRSVDPageOK = WaitDownLoadRSVDPageOK_3081(Adapter);
+		if(!bDownLoadRSVDPageOK)
+		{
+			RTW_INFO("ERROR: IRAM  bDownLoadRSVDPageOK is false!!\n");
+			return;
+		}
+
+		IDDMADownLoadFW_3081(Adapter,MEMOffsetInTxPacketBuf,OCPBASE_IMEM_3081+pkt_offset,filesize_ram_block,fs,ls);
+
+		iram_pkt_size -= filesize_ram_block;
+		pkt_offset += filesize_ram_block;
+	}
+
+	// Enable Bcn
+	SetBcnCtrlReg(Adapter, BIT3, 0);
+	SetBcnCtrlReg(Adapter, 0, BIT4);
+
+	// To make sure that if there exists an adapter which would like to send beacon.
+	// If exists, the origianl value of 0x422[6] will be 1, we should check this to
+	// prevent from setting 0x422[6] to 0 after download reserved page, or it will cause
+	// the beacon cannot be sent by HW.
+	// 2010.06.23. Added by tynli.
+	if(bSendBeacon)
+	{
+		rtw_write8(Adapter, REG_FWHW_TXQ_CTRL_8814A+2, tmpReg422);
+	}
+
+	// Do not enable HW DMA BCN or it will cause Pcie interface hang by timing issue. 2011.11.24. by tynli.
+	//if(!Adapter->bEnterPnpSleep)
+	{
+		// Clear CR[8] or beacon packet will not be send to TxBuf anymore.
+		u1bTmp = rtw_read8(Adapter, REG_CR_8814A+1);
+		rtw_write8(Adapter, REG_CR_8814A+1, (u1bTmp&(~BIT0)));
+	}
+
+	u1bTmp=rtw_read8(Adapter, REG_8051FW_CTRL_8814A); //add by gw for flags to show the fw download ok 20130826
+	if( u1bTmp&DMEM_CHKSUM_OK)
+	{
+		if(u1bTmp&IMEM_CHKSUM_OK)
+		{
+			u1Byte tem;
+			tem=rtw_read8(Adapter, REG_8051FW_CTRL_8814A+1);
+			rtw_write8(Adapter, REG_8051FW_CTRL_8814A+1,(tem|BIT6));
+		}
+	}
+}
+
 s32
 FirmwareDownload8814A(
 	IN	PADAPTER			Adapter,
@@ -706,19 +921,7 @@ FirmwareDownload8814A(
 
 	_3081Disable8814A(Adapter);//add by gw 2013026 for disable mcu core
 
-	while (!RTW_CANNOT_IO(Adapter)
-	       && (write_fw++ < 3 || rtw_get_passing_time_ms(fwdl_start_time) < 500)) {
-		/* reset FWDL chksum */
-		rtw_write8(Adapter, REG_MCUFWDL, rtw_read8(Adapter, REG_MCUFWDL) | FWDL_ChkSum_rpt);
-
-		rtStatus = _WriteFW_8814A(Adapter, pFirmwareBuf, FirmwareLen);
-		if (rtStatus != _SUCCESS)
-			continue;
-
-		rtStatus = polling_fwdl_chksum(Adapter, 5, 50);
-		if (rtStatus == _SUCCESS)
-			break;
-	}
+	HalROMDownloadFWRSVDPage8814A(Adapter,pFirmwareBuf,FirmwareLen);
 
 	_3081Enable8814A(Adapter);//add by gw 2013026 for Enable mcu core
 
@@ -750,7 +953,6 @@ exit:
 
 	return rtStatus;
 }
-
 
 
 void InitializeFirmwareVars8814(PADAPTER padapter)
