@@ -218,7 +218,7 @@ ifeq ($(CONFIG_PCI_HCI), y)
 HCI_NAME = pci
 endif
 
-ifeq ($(CONFIG_RTL8812A)_$(CONFIG_RTL8821A)_$(CONFIG_RTL8814A), y_n_n)
+ifeq ($(CONFIG_RTL8812A)_$(CONFIG_RTL8821A)_$(CONFIG_RTL8814A), y_n_y)
 
 EXTRA_CFLAGS += -DDRV_NAME=\"rtl88xxau\"
 ifeq ($(CONFIG_USB_HCI), y)
