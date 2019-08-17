@@ -46,7 +46,7 @@ CONFIG_RTL8812A = y
 CONFIG_RTL8821A = n
 CONFIG_RTL8192E = n
 CONFIG_RTL8723B = n
-CONFIG_RTL8814A = n
+CONFIG_RTL8814A = y
 CONFIG_RTL8723C = n
 CONFIG_RTL8188F = n
 CONFIG_RTL8188GTV = n
@@ -218,7 +218,7 @@ ifeq ($(CONFIG_PCI_HCI), y)
 HCI_NAME = pci
 endif
 
-ifeq ($(CONFIG_RTL8812A)_$(CONFIG_RTL8821A)_$(CONFIG_RTL8814A), y_n_n)
+ifeq ($(CONFIG_RTL8812A)_$(CONFIG_RTL8821A)_$(CONFIG_RTL8814A), y_n_y)
 
 EXTRA_CFLAGS += -DDRV_NAME=\"rtl88xxau\"
 ifeq ($(CONFIG_USB_HCI), y)
@@ -320,7 +320,7 @@ EXTRA_CFLAGS += -DCONFIG_RTL8188E
 
 _HAL_INTFS_FILES +=	hal/HalPwrSeqCmd.o \
 					hal/$(RTL871X)/Hal8188EPwrSeq.o\
- 					hal/$(RTL871X)/$(RTL871X)_xmit.o\
+					hal/$(RTL871X)/$(RTL871X)_xmit.o\
 					hal/$(RTL871X)/$(RTL871X)_sreset.o
 
 _HAL_INTFS_FILES +=	hal/$(RTL871X)/$(RTL871X)_hal_init.o \
@@ -2405,4 +2405,3 @@ clean:
 	rm -fr *.mod.c *.mod *.o .*.cmd *.ko *~
 	rm -fr .tmp_versions
 endif
-

@@ -307,8 +307,8 @@ void hal_txbf_8814a_rf_mode(void *dm_void,
 		}
 
 		/*@for 8814 19ac(idx 1), 19b4(idx 0), different Tx ant setting*/
-		odm_set_bb_reg(dm, REG_BB_TXBF_ANT_SET_BF1_8814A, BIT(28) | BIT29, 0x2); /*@enable BB TxBF ant mapping register*/
-		odm_set_bb_reg(dm, REG_BB_TXBF_ANT_SET_BF1_8814A, BIT30, 0x1); /*@if Nsts > Nc don't apply V matrix*/
+		odm_set_bb_reg(dm, REG_BB_TXBF_ANT_SET_BF1_8814A, BIT(28) | BIT(29), 0x2); /*@enable BB TxBF ant mapping register*/
+		odm_set_bb_reg(dm, REG_BB_TXBF_ANT_SET_BF1_8814A, BIT(30), 0x1); /*@if Nsts > Nc don't apply V matrix*/
 
 		if (idx == 0) {
 			switch (nr_index) {
@@ -552,13 +552,13 @@ void hal_txbf_8814a_enter(void *dm_void, u8 bfer_bfee_idx)
 
 		/*@CSI report parameters of Beamformee*/
 		if (bfee_idx == 0) {
-			/*@Get BIT24 & BIT25*/
+			/*@Get BIT(24) & BIT(25)*/
 			u8 tmp = odm_read_1byte(dm, REG_ASSOCIATED_BFMEE_SEL_8814A + 3) & 0x3;
 
 			odm_write_1byte(dm, REG_ASSOCIATED_BFMEE_SEL_8814A + 3, tmp | 0x60);
 			odm_write_2byte(dm, REG_ASSOCIATED_BFMEE_SEL_8814A, sta_id | BIT(9));
 		} else
-			odm_write_2byte(dm, REG_ASSOCIATED_BFMEE_SEL_8814A + 2, sta_id | 0xE200); /*Set BIT25*/
+			odm_write_2byte(dm, REG_ASSOCIATED_BFMEE_SEL_8814A + 2, sta_id | 0xE200); /*Set BIT(25)*/
 
 		phydm_beamforming_notify(dm);
 	}

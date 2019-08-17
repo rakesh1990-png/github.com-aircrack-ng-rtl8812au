@@ -33,10 +33,6 @@
 	#include "rtl8814a_sreset.h"
 #endif /* DBG_CONFIG_ERROR_DETECT */
 
-enum {
-	VOLTAGE_V25						= 0x03,
-	LDOE25_SHIFT					= 28 ,
-};
 /* max. iram is 64k , max dmen is 32k. Total = 96k = 0x18000*/
 #define FW_SIZE							0x18000
 #define FW_START_ADDRESS   0x1000
@@ -174,8 +170,6 @@ typedef struct _RT_FIRMWARE_8814 {
 #define DRIVER_EARLY_INT_TIME_8814		0x05
 #define BCN_DMA_ATIME_INT_TIME_8814		0x02
 
-
-#define MAX_PAGE_SIZE			4096	/* @ page : 4k bytes */
 
 #define EFUSE_MAX_SECTION_JAGUAR				64
 
