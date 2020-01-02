@@ -49,7 +49,7 @@ CONFIG_USB_HCI = y
 CONFIG_LED_CONTROL = y
 CONFIG_LED_ENABLE = y
 ########################## Features ###########################
-CONFIG_NET_NS = n
+CONFIG_NET_NS = y
 CONFIG_IPV6_DISABLE = n
 CONFIG_MP_INCLUDED = y
 CONFIG_CONCURRENT_MODE = n
