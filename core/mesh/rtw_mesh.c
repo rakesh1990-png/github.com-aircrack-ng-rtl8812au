@@ -3367,24 +3367,24 @@ void rtw_mesh_init_mesh_info(_adapter *adapter)
 	_rtw_memset(minfo, 0, sizeof(struct rtw_mesh_info));
 
 	rtw_mesh_plink_ctl_init(adapter);
-	
+
 	minfo->last_preq = rtw_get_current_time();
 	/* minfo->last_sn_update = rtw_get_current_time(); */
 	minfo->next_perr = rtw_get_current_time();
-	
+
 	ATOMIC_SET(&minfo->mpaths, 0);
 	rtw_mesh_pathtbl_init(adapter);
 
 	_rtw_init_queue(&minfo->mpath_tx_queue);
 	tasklet_init(&minfo->mpath_tx_tasklet
-		, (void(*)(unsigned long))mpath_tx_tasklet_hdl
+		, (void(*))mpath_tx_tasklet_hdl
 		, (unsigned long)adapter);
 
 	rtw_mrc_init(adapter);
 
 	_rtw_init_listhead(&minfo->preq_queue.list);
 	_rtw_spinlock_init(&minfo->mesh_preq_queue_lock);
-	
+
 	rtw_init_timer(&adapter->mesh_path_timer, adapter, rtw_ieee80211_mesh_path_timer, adapter);
 	rtw_init_timer(&adapter->mesh_path_root_timer, adapter, rtw_ieee80211_mesh_path_root_timer, adapter);
 	rtw_init_timer(&adapter->mesh_atlm_param_req_timer, adapter, rtw_mesh_atlm_param_req_timer, adapter);
