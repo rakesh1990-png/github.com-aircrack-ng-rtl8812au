@@ -56,7 +56,7 @@ CONFIG_GSPI_HCI = n
 ########################## Features ###########################
 CONFIG_AP_MODE = y
 CONFIG_P2P = y
-CONFIG_MP_INCLUDED = y
+CONFIG_MP_INCLUDED = n
 CONFIG_POWER_SAVING = n
 CONFIG_IPS_MODE = default
 CONFIG_LPS_MODE = default
